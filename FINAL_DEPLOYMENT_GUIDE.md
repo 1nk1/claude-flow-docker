@@ -78,16 +78,16 @@ chmod +x verify-all.sh
 
 Expected output: `🎉 PERFECT! All checks passed!`
 
-### Step 2: Replace YOUR_USERNAME
+### Step 2: Replace 1nk1
 
 **CRITICAL**: Replace with your actual GitHub username!
 
 ```bash
 # Example: if your username is "john_doe"
-find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/YOUR_USERNAME/john_doe/g' {} \;
+find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/1nk1/john_doe/g' {} \;
 
 # Verify replacement worked
-grep -r "YOUR_USERNAME" . --include="*.md" --include="*.yml"
+grep -r "1nk1" . --include="*.md" --include="*.yml"
 # Should return nothing!
 ```
 
@@ -149,7 +149,7 @@ git push -u origin main
 
 ### Step 7: Wait for GitHub Actions
 
-1. Go to: `https://github.com/YOUR_USERNAME/claude-flow-docker/actions`
+1. Go to: `https://github.com/1nk1/claude-flow-docker/actions`
 2. Wait 10-15 minutes for all workflows to complete
 3. Expected result: **All green ✅**
 
@@ -209,7 +209,7 @@ On GitHub Settings:
 
 - [ ] Extracted archive
 - [ ] Ran `./verify-all.sh` - all passed
-- [ ] Replaced ALL `YOUR_USERNAME` placeholders
+- [ ] Replaced ALL `1nk1` placeholders
 - [ ] Tested locally with `make test`
 - [ ] All scripts executable (`chmod +x *.sh tests/*.sh`)
 - [ ] Git initialized
@@ -256,7 +256,7 @@ On GitHub Settings:
 ./verify-all.sh
 
 # Replace username (example)
-find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/YOUR_USERNAME/myusername/g' {} \;
+find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/1nk1/myusername/g' {} \;
 
 # Test locally
 make setup && make start && make test
@@ -289,14 +289,14 @@ docker logs claude-flow-alpha
 ./verify-all.sh
 ```
 
-### Still Have YOUR_USERNAME?
+### Still Have 1nk1?
 
 ```bash
 # Find remaining placeholders
-grep -r "YOUR_USERNAME" . --include="*.md" --include="*.yml"
+grep -r "1nk1" . --include="*.md" --include="*.yml"
 
 # Replace all
-find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/YOUR_USERNAME/your-real-username/g' {} \;
+find . -type f \( -name "*.md" -o -name "*.yml" \) -exec sed -i 's/1nk1/your-real-username/g' {} \;
 ```
 
 ### Need Help?
@@ -313,7 +313,7 @@ After deployment, you should have:
 - ✅ Repository on GitHub with your username
 - ✅ All GitHub Actions passing (green badges)
 - ✅ Release v1.0.0 created
-- ✅ No "YOUR_USERNAME" placeholders
+- ✅ No "1nk1" placeholders
 - ✅ All documentation accessible
 - ✅ MCP integration working
 - ✅ Tests passing locally and in CI

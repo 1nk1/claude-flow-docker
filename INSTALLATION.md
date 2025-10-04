@@ -24,7 +24,7 @@ git --version
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-flow-docker.git
+git clone https://github.com/1nk1/claude-flow-docker.git
 cd claude-flow-docker
 ```
 
@@ -258,8 +258,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | \
 ## 🆘 Get Help
 
 - Check [Troubleshooting Guide](TROUBLESHOOTING.md)
-- Open an [Issue](https://github.com/YOUR_USERNAME/claude-flow-docker/issues)
-- Read [Documentation](https://github.com/YOUR_USERNAME/claude-flow-docker/wiki)
+- Open an [Issue](https://github.com/1nk1/claude-flow-docker/issues)
+- Read [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
 
 ## 📋 System Requirements
 

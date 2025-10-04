@@ -185,7 +185,7 @@ graph LR
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/claude-flow-docker.git
+git clone https://github.com/1nk1/claude-flow-docker.git
 
 # 2. Setup
 cd claude-flow-docker
@@ -260,9 +260,9 @@ Free for personal and commercial use.
 
 ## 📞 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/claude-flow-docker/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/claude-flow-docker/discussions)
-- **Wiki**: [Documentation](https://github.com/YOUR_USERNAME/claude-flow-docker/wiki)
+- **Issues**: [GitHub Issues](https://github.com/1nk1/claude-flow-docker/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/1nk1/claude-flow-docker/discussions)
+- **Wiki**: [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
 
 ## 📊 Success Metrics
 

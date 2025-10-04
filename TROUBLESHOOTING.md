@@ -549,8 +549,8 @@ Include:
 
 ### Community Support
 
-- [GitHub Issues](https://github.com/YOUR_USERNAME/claude-flow-docker/issues)
-- [GitHub Discussions](https://github.com/YOUR_USERNAME/claude-flow-docker/discussions)
+- [GitHub Issues](https://github.com/1nk1/claude-flow-docker/issues)
+- [GitHub Discussions](https://github.com/1nk1/claude-flow-docker/discussions)
 - [Claude-Flow Wiki](https://github.com/ruvnet/claude-flow/wiki)
 
 ---
