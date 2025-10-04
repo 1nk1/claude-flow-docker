@@ -1,0 +1,79 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# Documentation
+*.md
+docs/
+LICENSE
+CHANGELOG.md
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Node modules
+node_modules
+npm-debug.log
+
+# Test files
+tests/
+test/
+*.test.js
+*.spec.js
+coverage/
+.nyc_output/
+
+# Project files (will be mounted as volumes)
+project/
+backups/
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Archives
+*.tar
+*.tar.gz
+*.zip
+
+# Sensitive
+secrets/
+*.pem
+*.key
+id_rsa*

@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  claude-flow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-flow-alpha
+    hostname: claude-flow
+    
+    # Volumes для persistent storage
+    volumes:
+      # Рабочая директория проекта (bind mount для доступа к файлам)
+      - ./project:/workspace/project
+      
+      # Persistent storage для Claude-Flow
+      - claude-flow-hive:/workspace/.hive-mind
+      - claude-flow-swarm:/workspace/.swarm
+      - claude-flow-memory:/workspace/memory
+      - claude-flow-coordination:/workspace/coordination
+      
+      # Конфигурация (опционально)
+      - ./config/.claude:/workspace/.claude
+      
+      # Логи
+      - ./logs:/workspace/logs
+    
+    # Переменные окружения
+    environment:
+      - NODE_ENV=development
+      - CLAUDE_FLOW_HOME=/workspace
+      - CLAUDE_FLOW_PROJECT=/workspace/project
+      - CLAUDE_FLOW_LOG_LEVEL=info
+      - MCP_SERVER_MODE=stdio
+      - SQLITE_TMPDIR=/workspace/.swarm
+      
+    # Сеть
+    networks:
+      - claude-flow-net
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '2'
+          memory: 2G
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Stdin/stdout для MCP communication
+    stdin_open: true
+    tty: true
+    
+    # Команда для keep alive
+    command: tail -f /dev/null
+
+  # Опциональный service для Flow Nexus Cloud (если нужен)
+  flow-nexus:
+    image: node:18-alpine
+    container_name: flow-nexus-bridge
+    volumes:
+      - ./project:/workspace/project
+      - flow-nexus-data:/data
+    environment:
+      - FLOW_NEXUS_API_URL=https://flow-nexus.ruv.io
+    networks:
+      - claude-flow-net
+    profiles:
+      - nexus
+    command: tail -f /dev/null
+
+volumes:
+  claude-flow-hive:
+    name: claude-flow-hive
+  claude-flow-swarm:
+    name: claude-flow-swarm
+  claude-flow-memory:
+    name: claude-flow-memory
+  claude-flow-coordination:
+    name: claude-flow-coordination
+  flow-nexus-data:
+    name: flow-nexus-data
+
+networks:
+  claude-flow-net:
+    name: claude-flow-network
+    driver: bridge

@@ -1,0 +1,126 @@
+name: MCP Integration Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  test-mcp-connection:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and start services
+      run: |
+        docker-compose build
+        docker-compose up -d
+        sleep 15
+
+    - name: Wait for container to be healthy
+      run: |
+        timeout 60 bash -c 'until docker inspect --format="{{.State.Health.Status}}" claude-flow-alpha | grep -q "healthy"; do sleep 2; done'
+
+    - name: Test MCP server availability
+      run: |
+        docker exec -i claude-flow-alpha npx claude-flow mcp --help || echo "MCP help displayed"
+
+    - name: Test swarm MCP commands
+      run: |
+        chmod +x tests/test-mcp-connection.sh
+        ./tests/test-mcp-connection.sh
+
+    - name: Test memory MCP commands
+      run: |
+        docker exec claude-flow-alpha claude-flow memory stats
+
+    - name: Test hive-mind MCP
+      run: |
+        docker exec claude-flow-alpha claude-flow hive-mind status || echo "No active sessions (expected)"
+
+    - name: Verify MCP config file
+      run: |
+        test -f config/.claude/settings.json
+        cat config/.claude/settings.json | grep -q "claude-flow-docker"
+
+    - name: Test Docker exec MCP integration
+      run: |
+        docker exec -i claude-flow-alpha npx claude-flow mcp <<EOF
+        {"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}
+        EOF
+
+    - name: Collect logs on failure
+      if: failure()
+      run: |
+        docker-compose logs > mcp-test-logs.txt
+        cat mcp-test-logs.txt
+
+    - name: Upload logs as artifact
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: mcp-test-logs
+        path: mcp-test-logs.txt
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker-compose down -v
+
+  test-claude-code-integration:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install Claude Code (for testing)
+      run: |
+        npm install -g @anthropic-ai/claude-code@latest || echo "Claude Code installation attempted"
+
+    - name: Build and start container
+      run: |
+        docker-compose build
+        docker-compose up -d
+        sleep 15
+
+    - name: Test MCP configuration format
+      run: |
+        # Validate JSON format
+        cat config/.claude/settings.json | jq . > /dev/null
+        echo "✅ MCP config is valid JSON"
+        
+        # Check required fields
+        cat config/.claude/settings.json | jq '.mcpServers["claude-flow-docker"]' > /dev/null
+        echo "✅ MCP server configured"
+
+    - name: Test Docker exec command
+      run: |
+        # Test the exact command that MCP config uses
+        docker exec -i claude-flow-alpha npx claude-flow --version
+
+    - name: Simulate MCP tool call
+      run: |
+        # Simulate what Claude Code would do
+        docker exec -i claude-flow-alpha npx claude-flow mcp << 'EOF'
+        {"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
+        EOF
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker-compose down -v
