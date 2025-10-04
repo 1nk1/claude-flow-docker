@@ -82,7 +82,7 @@ jobs:
 
     - name: Upload image artifact
       if: github.event_name == 'push'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: docker-image
         path: /tmp/${{ env.IMAGE_NAME }}.tar.gz
