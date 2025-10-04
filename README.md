@@ -1,7 +1,6 @@
 # 🐳 Claude-Flow Docker
 
 [![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml)
-[![Docker Test](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-test.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-22.x-brightgreen.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/docker-20.10+-blue.svg)](https://www.docker.com/)
@@ -145,7 +144,6 @@ claude-flow-docker/
 ├── .github/                    # GitHub Actions workflows
 │   ├── workflows/
 │   │   ├── docker-build.yml   # Build and test Docker image
-│   │   ├── docker-test.yml    # Integration tests
 │   │   └── docs.yml           # Documentation checks
 │   └── ISSUE_TEMPLATE/        # Issue templates
 ├── config/                     # Configuration
@@ -253,7 +251,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 🐛 [Report Bug](https://github.com/1nk1/claude-flow-docker/issues)
 - 💡 [Request Feature](https://github.com/1nk1/claude-flow-docker/issues)
 - 📖 [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
-- 💬 [Discussions](https://github.com/1nk1/claude-flow-docker/discussions)
+- 💬 [Discussions](https://github.com/1nk1/claude-flow-docker)
 
 ## ⭐ Star History
 
