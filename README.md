@@ -1,7 +1,7 @@
 # 🐳 Claude-Flow Docker
 
-[![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-build.yml)
-[![Docker Test](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-test.yml/badge.svg)](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-test.yml)
+[![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml)
+[![Docker Test](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-test.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-22.x-brightgreen.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/docker-20.10+-blue.svg)](https://www.docker.com/)
