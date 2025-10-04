@@ -22,8 +22,8 @@ jobs:
 
     - name: Build and start services
       run: |
-        docker-compose build
-        docker-compose up -d
+        docker compose build
+        docker compose up -d
         sleep 15
 
     - name: Wait for container to be healthy
@@ -61,7 +61,7 @@ jobs:
     - name: Collect logs on failure
       if: failure()
       run: |
-        docker-compose logs > mcp-test-logs.txt
+        docker compose logs > mcp-test-logs.txt
         cat mcp-test-logs.txt
 
     - name: Upload logs as artifact
@@ -74,7 +74,7 @@ jobs:
     - name: Cleanup
       if: always()
       run: |
-        docker-compose down -v
+        docker compose down -v
 
   test-claude-code-integration:
     runs-on: ubuntu-latest
@@ -94,8 +94,8 @@ jobs:
 
     - name: Build and start container
       run: |
-        docker-compose build
-        docker-compose up -d
+        docker compose build
+        docker compose up -d
         sleep 15
 
     - name: Test MCP configuration format
@@ -123,4 +123,4 @@ jobs:
     - name: Cleanup
       if: always()
       run: |
-        docker-compose down -v
+        docker compose down -v
