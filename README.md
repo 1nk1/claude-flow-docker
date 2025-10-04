@@ -1,7 +1,7 @@
 # 🐳 Claude-Flow Docker
 
-[![Docker Build](https://github.com/adjkas/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/adjkas/claude-flow-docker/actions/workflows/docker-build.yml)
-[![Docker Test](https://github.com/adjkas/claude-flow-docker/actions/workflows/docker-test.yml/badge.svg)](https://github.com/adjkas/claude-flow-docker/actions/workflows/docker-test.yml)
+[![Docker Build](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-build.yml)
+[![Docker Test](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-test.yml/badge.svg)](https://github.com/1nk1kas/claude-flow-docker/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-22.x-brightgreen.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/docker-20.10+-blue.svg)](https://www.docker.com/)
@@ -34,7 +34,7 @@ Full-featured AI orchestration in a Docker container with automatic MCP server s
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/adjkas/claude-flow-docker.git
+git clone https://github.com/1nk1kas/claude-flow-docker.git
 cd claude-flow-docker
 
 # 2. Setup and start
@@ -250,14 +250,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📮 Support
 
-- 🐛 [Report Bug](https://github.com/adjkas/claude-flow-docker/issues)
-- 💡 [Request Feature](https://github.com/adjkas/claude-flow-docker/issues)
-- 📖 [Documentation](https://github.com/adjkas/claude-flow-docker/wiki)
-- 💬 [Discussions](https://github.com/adjkas/claude-flow-docker/discussions)
+- 🐛 [Report Bug](https://github.com/1nk1kas/claude-flow-docker/issues)
+- 💡 [Request Feature](https://github.com/1nk1kas/claude-flow-docker/issues)
+- 📖 [Documentation](https://github.com/1nk1kas/claude-flow-docker/wiki)
+- 💬 [Discussions](https://github.com/1nk1kas/claude-flow-docker/discussions)
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=adjkas/claude-flow-docker&type=Date)](https://star-history.com/#adjkas/claude-flow-docker&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=1nk1kas/claude-flow-docker&type=Date)](https://star-history.com/#1nk1kas/claude-flow-docker&Date)
 
 ---
 
