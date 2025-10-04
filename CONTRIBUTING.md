@@ -46,7 +46,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 ### Prerequisites
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-flow-docker.git
+git clone https://github.com/adjkas/claude-flow-docker.git
 cd claude-flow-docker
 ```
 

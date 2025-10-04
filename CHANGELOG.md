@@ -82,5 +82,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 For more information, see:
-- [GitHub Releases](https://github.com/YOUR_USERNAME/claude-flow-docker/releases)
-- [Documentation](https://github.com/YOUR_USERNAME/claude-flow-docker/wiki)
+- [GitHub Releases](https://github.com/adjkas/claude-flow-docker/releases)
+- [Documentation](https://github.com/adjkas/claude-flow-docker/wiki)
