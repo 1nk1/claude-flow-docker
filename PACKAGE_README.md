@@ -98,7 +98,7 @@ cat GITHUB_SETUP.md
 git init
 git add .
 git commit -m "Initial commit: Claude-Flow Docker v1.0.0"
-git remote add origin git@github.com:1nk1kas/claude-flow-docker.git
+git remote add origin git@github.com:1nk1/claude-flow-docker.git
 git branch -M main
 git push -u origin main
 ```
@@ -149,8 +149,8 @@ git push origin v1.0.0
 
 Before pushing to GitHub, make sure:
 
-- [ ] Replace `1nk1kas` in README.md
-- [ ] Replace `1nk1kas` in workflow files
+- [ ] Replace `1nk1` in README.md
+- [ ] Replace `1nk1` in workflow files
 - [ ] Test locally with `make test`
 - [ ] All scripts are executable (`chmod +x *.sh`)
 - [ ] No sensitive data (check .gitignore)
@@ -162,9 +162,9 @@ Before pushing to GitHub, make sure:
 ### Update Repository Info
 
 ```bash
-# Find and replace 1nk1kas
-find . -type f -name "*.md" -exec sed -i 's/1nk1kas/your-github-username/g' {} \;
-find . -type f -name "*.yml" -exec sed -i 's/1nk1kas/your-github-username/g' {} \;
+# Find and replace 1nk1
+find . -type f -name "*.md" -exec sed -i 's/1nk1/your-github-username/g' {} \;
+find . -type f -name "*.yml" -exec sed -i 's/1nk1/your-github-username/g' {} \;
 ```
 
 ### Modify Settings

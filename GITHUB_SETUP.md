@@ -51,11 +51,11 @@ git commit -m "Initial commit: Claude-Flow Docker v1.0.0
 - GitHub Actions CI/CD pipeline
 - Comprehensive documentation and tests"
 
-# Add remote (replace 1nk1kas with your GitHub username)
-git remote add origin git@github.com:1nk1kas/claude-flow-docker.git
+# Add remote (replace 1nk1 with your GitHub username)
+git remote add origin git@github.com:1nk1/claude-flow-docker.git
 
 # Or using HTTPS:
-# git remote add origin https://github.com/1nk1kas/claude-flow-docker.git
+# git remote add origin https://github.com/1nk1/claude-flow-docker.git
 
 # Push to GitHub
 git branch -M main
@@ -77,11 +77,11 @@ Wait for all checks to pass (takes 5-10 minutes).
 
 ### 5. Update README Badges
 
-Edit `README.md` and replace `1nk1kas` with your actual GitHub username:
+Edit `README.md` and replace `1nk1` with your actual GitHub username:
 
 ```bash
 # Find and replace
-sed -i 's/1nk1kas/your-actual-username/g' README.md
+sed -i 's/1nk1/your-actual-username/g' README.md
 
 # Commit the change
 git add README.md
@@ -116,8 +116,8 @@ act pull_request  # Run PR workflows
 
 ## 📋 Checklist Before First Push
 
-- [ ] Updated `1nk1kas` in README.md
-- [ ] Updated `1nk1kas` in workflows
+- [ ] Updated `1nk1` in README.md
+- [ ] Updated `1nk1` in workflows
 - [ ] Reviewed .gitignore
 - [ ] Tested locally with `make test`
 - [ ] All scripts are executable
@@ -280,21 +280,21 @@ git push --force
 
 Watch workflows at:
 ```
-https://github.com/1nk1kas/claude-flow-docker/actions
+https://github.com/1nk1/claude-flow-docker/actions
 ```
 
 ### Security Alerts
 
 Check for vulnerabilities:
 ```
-https://github.com/1nk1kas/claude-flow-docker/security
+https://github.com/1nk1/claude-flow-docker/security
 ```
 
 ### Insights
 
 View repository analytics:
 ```
-https://github.com/1nk1kas/claude-flow-docker/pulse
+https://github.com/1nk1/claude-flow-docker/pulse
 ```
 
 ## 🎉 Success Criteria

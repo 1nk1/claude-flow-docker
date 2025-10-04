@@ -4,7 +4,7 @@
 
 1. **Современные badges** - как в оригинальном Claude-Flow
 2. **check-links не блокирует** - теперь `continue-on-error: true`
-3. **Игнорирует YOUR_USERNAME** - в markdown-link-check config
+3. **Игнорирует 1nk1** - в markdown-link-check config
 4. **Автоматический fix** - обновленный auto-fix.sh
 
 ## 🚀 Быстрое исправление
@@ -12,7 +12,7 @@
 ### В вашем репозитории (~/repos/claude-flow-docker):
 
 ```bash
-# 1. Замените YOUR_USERNAME
+# 1. Замените 1nk1
 ./auto-fix.sh
 # Введите ваш GitHub username (например: 1nk1)
 
@@ -21,7 +21,7 @@ git add .
 git commit -m "fix: Update badges and fix documentation links
 
 - Add modern shields.io badges
-- Fix YOUR_USERNAME placeholders
+- Fix 1nk1 placeholders
 - Make check-links non-blocking
 - Update markdown-link-check config"
 
@@ -33,8 +33,8 @@ git push
 **Теперь README.md имеет:**
 
 ```markdown
-[![Stars](https://img.shields.io/github/stars/YOUR_USERNAME/claude-flow-docker?style=for-the-badge&logo=github&color=yellow)]
-[![Downloads](https://img.shields.io/github/downloads/YOUR_USERNAME/claude-flow-docker/total?style=for-the-badge&logo=github&color=blue)]
+[![Stars](https://img.shields.io/github/stars/1nk1/claude-flow-docker?style=for-the-badge&logo=github&color=yellow)]
+[![Downloads](https://img.shields.io/github/downloads/1nk1/claude-flow-docker/total?style=for-the-badge&logo=github&color=blue)]
 [![Version](https://img.shields.io/badge/v1.0.0-blue?style=for-the-badge&label=VERSION)]
 [![Node.js](https://img.shields.io/badge/node-22.x-green?style=for-the-badge&logo=node.js)]
 [![Docker](https://img.shields.io/badge/docker-20.10+-blue?style=for-the-badge&logo=docker)]
@@ -50,9 +50,9 @@ git push
 
 **+ CI/CD Status badges:**
 ```markdown
-[![Docker Build](https://github.com/YOUR_USERNAME/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)]
-[![MCP Tests](https://github.com/YOUR_USERNAME/claude-flow-docker/actions/workflows/mcp-integration.yml/badge.svg)]
-[![Docs](https://github.com/YOUR_USERNAME/claude-flow-docker/actions/workflows/docs.yml/badge.svg)]
+[![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)]
+[![MCP Tests](https://github.com/1nk1/claude-flow-docker/actions/workflows/mcp-integration.yml/badge.svg)]
+[![Docs](https://github.com/1nk1/claude-flow-docker/actions/workflows/docs.yml/badge.svg)]
 ```
 
 ## 🔧 Что изменилось
@@ -73,7 +73,7 @@ git push
 ```json
 {
   "ignorePatterns": [
-    {"pattern": "YOUR_USERNAME"},  # ← Игнорирует placeholder
+    {"pattern": "1nk1"},  # ← Игнорирует placeholder
     {"pattern": "^#"}              # ← Игнорирует якоря
   ],
   "aliveStatusCodes": [200, 206, 301, 302, 307, 308, 999],
@@ -86,7 +86,7 @@ git push
 ```bash
 # Теперь также заменяет в JSON файлах
 find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.json" \) \
-  -exec sed -i "s/YOUR_USERNAME/$GITHUB_USER/g" {} \;
+  -exec sed -i "s/1nk1/$GITHUB_USER/g" {} \;
 ```
 
 ## 📊 После push
@@ -130,15 +130,15 @@ GITHUB_USER="1nk1"
 # Заменить везде
 find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.json" \) \
   -not -path "./.git/*" \
-  -exec sed -i "s/YOUR_USERNAME/$GITHUB_USER/g" {} \;
+  -exec sed -i "s/1nk1/$GITHUB_USER/g" {} \;
 
 # Проверить
-grep -r "YOUR_USERNAME" . --include="*.md" --include="*.yml"
+grep -r "1nk1" . --include="*.md" --include="*.yml"
 # Должно быть пусто!
 
 # Commit и push
 git add .
-git commit -m "fix: Replace YOUR_USERNAME with $GITHUB_USER"
+git commit -m "fix: Replace 1nk1 with $GITHUB_USER"
 git push
 ```
 

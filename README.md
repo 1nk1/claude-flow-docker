@@ -34,7 +34,7 @@ Full-featured AI orchestration in a Docker container with automatic MCP server s
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/1nk1kas/claude-flow-docker.git
+git clone https://github.com/1nk1/claude-flow-docker.git
 cd claude-flow-docker
 
 # 2. Setup and start
@@ -250,14 +250,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📮 Support
 
-- 🐛 [Report Bug](https://github.com/1nk1kas/claude-flow-docker/issues)
-- 💡 [Request Feature](https://github.com/1nk1kas/claude-flow-docker/issues)
-- 📖 [Documentation](https://github.com/1nk1kas/claude-flow-docker/wiki)
-- 💬 [Discussions](https://github.com/1nk1kas/claude-flow-docker/discussions)
+- 🐛 [Report Bug](https://github.com/1nk1/claude-flow-docker/issues)
+- 💡 [Request Feature](https://github.com/1nk1/claude-flow-docker/issues)
+- 📖 [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
+- 💬 [Discussions](https://github.com/1nk1/claude-flow-docker/discussions)
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=1nk1kas/claude-flow-docker&type=Date)](https://star-history.com/#1nk1kas/claude-flow-docker&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=1nk1/claude-flow-docker&type=Date)](https://star-history.com/#1nk1/claude-flow-docker&Date)
 
 ---
 

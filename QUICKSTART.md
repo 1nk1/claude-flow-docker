@@ -13,7 +13,7 @@ Get Claude-Flow Docker running in 3 minutes!
 
 ```bash
 # 1. Clone and enter
-git clone https://github.com/1nk1kas/claude-flow-docker.git
+git clone https://github.com/1nk1/claude-flow-docker.git
 cd claude-flow-docker
 
 # 2. Setup
@@ -255,8 +255,8 @@ make memory-stats
 ## 🆘 Help
 
 - `make help` - List all commands
-- [GitHub Issues](https://github.com/1nk1kas/claude-flow-docker/issues)
-- [Documentation](https://github.com/1nk1kas/claude-flow-docker/wiki)
+- [GitHub Issues](https://github.com/1nk1/claude-flow-docker/issues)
+- [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
 
 ---
 
