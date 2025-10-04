@@ -256,7 +256,7 @@ make memory-stats
 
 - `make help` - List all commands
 - [GitHub Issues](https://github.com/1nk1/claude-flow-docker/issues)
-- [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
+- 
 
 ---
 

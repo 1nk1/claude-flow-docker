@@ -261,8 +261,8 @@ Free for personal and commercial use.
 ## 📞 Contact & Support
 
 - **Issues**: [GitHub Issues](https://github.com/1nk1/claude-flow-docker/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/1nk1/claude-flow-docker)
-- **Wiki**: [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
+- **Discussions**: 
+- **Wiki**: 
 
 ## 📊 Success Metrics
 

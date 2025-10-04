@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # Redis - Cache & Queue
+  redis:
+    image: redis:7-alpine
+    container_name: claude-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    mem_limit: 512m
+    cpus: 0.5
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - claude-network
+
+  # Ollama - Universal GPU Support
+  ollama:
+    image: ollama/ollama:latest
+    container_name: claude-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_MAX_LOADED_MODELS=3
+    mem_limit: 8g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - claude-network
+
+  # Claude-Flow - Main Service
+  claude-flow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_VERSION=22
+    container_name: claude-flow-alpha
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./project:/workspace/project
+      - ./backups:/workspace/backups
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
+      - OLLAMA_URL=http://ollama:11434
+      - CLAUDE_FLOW_HOME=/workspace
+      - CLAUDE_FLOW_PROJECT=/workspace/project
+      - USE_OLLAMA_FOR_SIMPLE=true
+      - OLLAMA_TIMEOUT=30000
+      - CACHE_TTL=3600
+    depends_on:
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    mem_limit: 4g
+    cpus: 2.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "npx", "claude-flow", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - claude-network
+
+volumes:
+  redis-data:
+    driver: local
+  ollama-data:
+    driver: local
+
+networks:
+  claude-network:
+    driver: bridge

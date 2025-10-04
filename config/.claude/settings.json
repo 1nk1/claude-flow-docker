@@ -49,6 +49,20 @@
       },
       "description": "Memory and knowledge base MCP server"
     },
+    "claude-flow-swarm": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "claude-flow-alpha",
+        "npx",
+        "claude-flow",
+        "swarm",
+        "mcp"
+      ],
+      "env": {},
+      "description": "Quick swarm coordination MCP server"
+    },
     "claude-flow-github": {
       "command": "docker",
       "args": [

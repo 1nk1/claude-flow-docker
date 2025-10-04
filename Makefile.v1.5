@@ -1,0 +1,417 @@
+.PHONY: help setup build start stop restart status logs shell clean test v1.5-*
+
+# Colors
+GREEN  := \033[0;32m
+YELLOW := \033[1;33m
+RED    := \033[0;31m
+NC     := \033[0m
+
+# Default target
+.DEFAULT_GOAL := help
+
+# Help
+help:
+	@echo "$(GREEN)Claude-Flow Docker - Makefile Commands$(NC)"
+	@echo ""
+	@echo "$(YELLOW)📦 V1.0 Commands (Original):$(NC)"
+	@echo "  make setup          - First-time setup"
+	@echo "  make build          - Build Docker image"
+	@echo "  make start          - Start container"
+	@echo "  make stop           - Stop container"
+	@echo "  make restart        - Restart container"
+	@echo "  make status         - Check container status"
+	@echo "  make logs           - View container logs"
+	@echo "  make shell          - Open interactive shell"
+	@echo "  make clean          - Stop and remove container"
+	@echo ""
+	@echo "$(YELLOW)🚀 V1.5 Commands (New):$(NC)"
+	@echo "  make v1.5-detect    - Detect hardware configuration"
+	@echo "  make v1.5-start     - Start v1.5 services"
+	@echo "  make v1.5-stop      - Stop v1.5 services"
+	@echo "  make v1.5-restart   - Restart v1.5 services"
+	@echo "  make v1.5-status    - Check v1.5 status"
+	@echo "  make v1.5-logs      - View v1.5 logs"
+	@echo "  make v1.5-verify    - Verify v1.5 installation"
+	@echo ""
+	@echo "$(YELLOW)🦙 Ollama Commands:$(NC)"
+	@echo "  make ollama-init    - Initialize Ollama models"
+	@echo "  make ollama-list    - List installed models"
+	@echo "  make ollama-pull MODEL=name - Pull specific model"
+	@echo "  make ollama-test    - Test Ollama inference"
+	@echo "  make ollama-logs    - View Ollama logs"
+	@echo ""
+	@echo "$(YELLOW)⚡ Redis Commands:$(NC)"
+	@echo "  make redis-cli      - Open Redis CLI"
+	@echo "  make redis-stats    - Show Redis statistics"
+	@echo "  make redis-flush    - Clear Redis cache"
+	@echo ""
+	@echo "$(YELLOW)🧠 Smart Router Commands:$(NC)"
+	@echo "  make router-stats   - Show routing statistics"
+	@echo "  make router-reset   - Reset router cache"
+	@echo "  make router-config  - Show router configuration"
+	@echo ""
+	@echo "$(YELLOW)🎮 GPU Commands:$(NC)"
+	@echo "  make gpu-info       - Show GPU information"
+	@echo "  make gpu-test       - Test GPU acceleration"
+	@echo ""
+	@echo "$(YELLOW)🔄 Migration Commands:$(NC)"
+	@echo "  make migrate-v1.5   - Migrate from v1.0 to v1.5"
+	@echo "  make rollback-v1.0  - Rollback to v1.0"
+	@echo ""
+	@echo "$(YELLOW)🧪 Testing Commands:$(NC)"
+	@echo "  make test           - Run all tests"
+	@echo "  make test-v1.5      - Run v1.5 tests only"
+	@echo "  make test-ollama    - Test Ollama"
+	@echo "  make test-gpu       - Test GPU"
+	@echo ""
+	@echo "$(YELLOW)📊 Monitoring Commands:$(NC)"
+	@echo "  make monitor        - Monitor all services"
+	@echo "  make stats          - Show resource usage"
+	@echo ""
+	@echo "$(YELLOW)📦 Backup/Restore Commands:$(NC)"
+	@echo "  make backup         - Create backup"
+	@echo "  make restore BACKUP=file.tar.gz - Restore backup"
+	@echo ""
+
+#
+# V1.0 Commands
+#
+
+setup:
+	@echo "$(GREEN)Setting up Claude-Flow Docker v1.0...$(NC)"
+	@chmod +x *.sh docker-entrypoint.sh
+	@docker compose build
+	@echo "$(GREEN)✅ Setup complete! Run 'make start' to begin$(NC)"
+
+build:
+	@echo "$(GREEN)Building Docker image...$(NC)"
+	@docker compose build
+
+start:
+	@echo "$(GREEN)Starting Claude-Flow container...$(NC)"
+	@docker compose up -d
+	@echo "$(GREEN)✅ Container started!$(NC)"
+	@make status
+
+stop:
+	@echo "$(YELLOW)Stopping Claude-Flow container...$(NC)"
+	@docker compose down
+	@echo "$(GREEN)✅ Container stopped!$(NC)"
+
+restart:
+	@echo "$(YELLOW)Restarting Claude-Flow container...$(NC)"
+	@docker compose restart
+	@echo "$(GREEN)✅ Container restarted!$(NC)"
+
+status:
+	@echo "$(GREEN)Container Status:$(NC)"
+	@docker ps | grep claude-flow || echo "$(RED)No containers running$(NC)"
+
+logs:
+	@docker compose logs -f
+
+shell:
+	@docker exec -it claude-flow-alpha /bin/bash
+
+clean:
+	@echo "$(RED)Cleaning up...$(NC)"
+	@docker compose down -v
+	@echo "$(GREEN)✅ Cleanup complete!$(NC)"
+
+#
+# V1.5 Commands
+#
+
+v1.5-detect:
+	@echo "$(GREEN)Detecting hardware configuration...$(NC)"
+	@chmod +x detect-hardware.sh
+	@./detect-hardware.sh
+
+v1.5-start:
+	@echo "$(GREEN)Starting Claude-Flow v1.5 services...$(NC)"
+	@if [ -f .detected-hardware.env ]; then \
+		. ./.detected-hardware.env && \
+		docker compose -f $$COMPOSE_FILE up -d; \
+	else \
+		echo "$(RED)Hardware not detected. Run 'make v1.5-detect' first$(NC)"; \
+		exit 1; \
+	fi
+	@sleep 5
+	@make v1.5-status
+	@echo "$(GREEN)✅ V1.5 services started!$(NC)"
+
+v1.5-stop:
+	@echo "$(YELLOW)Stopping Claude-Flow v1.5 services...$(NC)"
+	@if [ -f .detected-hardware.env ]; then \
+		. ./.detected-hardware.env && \
+		docker compose -f $$COMPOSE_FILE down; \
+	else \
+		docker compose -f docker-compose.v1.5.yml down || \
+		docker compose -f docker-compose.v1.5-amd.yml down; \
+	fi
+	@echo "$(GREEN)✅ V1.5 services stopped!$(NC)"
+
+v1.5-restart:
+	@make v1.5-stop
+	@sleep 2
+	@make v1.5-start
+
+v1.5-status:
+	@echo "$(GREEN)V1.5 Services Status:$(NC)"
+	@echo ""
+	@echo "Containers:"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep claude- || echo "$(RED)No containers running$(NC)"
+	@echo ""
+	@echo "Health Checks:"
+	@docker ps --format "{{.Names}}" | grep claude- | while read container; do \
+		health=$$(docker inspect --format='{{.State.Health.Status}}' $$container 2>/dev/null || echo "none"); \
+		if [ "$$health" = "healthy" ]; then \
+			echo "  $(GREEN)✅ $$container: $$health$(NC)"; \
+		elif [ "$$health" = "none" ]; then \
+			echo "  $(YELLOW)⚠️  $$container: no healthcheck$(NC)"; \
+		else \
+			echo "  $(RED)❌ $$container: $$health$(NC)"; \
+		fi; \
+	done
+
+v1.5-logs:
+	@if [ -f .detected-hardware.env ]; then \
+		. ./.detected-hardware.env && \
+		docker compose -f $$COMPOSE_FILE logs -f; \
+	else \
+		docker compose -f docker-compose.v1.5.yml logs -f; \
+	fi
+
+v1.5-verify:
+	@echo "$(GREEN)Verifying Claude-Flow v1.5 installation...$(NC)"
+	@chmod +x verify-v1.5.sh
+	@./verify-v1.5.sh
+
+#
+# Ollama Commands
+#
+
+ollama-init:
+	@echo "$(GREEN)Initializing Ollama models...$(NC)"
+	@chmod +x init-ollama.sh
+	@./init-ollama.sh
+
+ollama-list:
+	@echo "$(GREEN)Installed Ollama models:$(NC)"
+	@docker exec claude-ollama ollama list
+
+ollama-pull:
+	@if [ -z "$(MODEL)" ]; then \
+		echo "$(RED)Error: MODEL not specified$(NC)"; \
+		echo "Usage: make ollama-pull MODEL=codellama:7b"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Pulling Ollama model: $(MODEL)$(NC)"
+	@docker exec claude-ollama ollama pull $(MODEL)
+
+ollama-test:
+	@echo "$(GREEN)Testing Ollama inference...$(NC)"
+	@docker exec claude-ollama ollama run codellama "print hello world in rust"
+
+ollama-logs:
+	@docker logs -f claude-ollama
+
+#
+# Redis Commands
+#
+
+redis-cli:
+	@docker exec -it claude-redis redis-cli
+
+redis-stats:
+	@echo "$(GREEN)Redis Statistics:$(NC)"
+	@docker exec claude-redis redis-cli INFO stats
+
+redis-flush:
+	@echo "$(YELLOW)Flushing Redis cache...$(NC)"
+	@docker exec claude-redis redis-cli FLUSHALL
+	@echo "$(GREEN)✅ Cache cleared!$(NC)"
+
+#
+# Smart Router Commands
+#
+
+router-stats:
+	@echo "$(GREEN)Smart Router Statistics:$(NC)"
+	@docker exec claude-flow-alpha node -e "\
+		const SmartRouter = require('./lib/smart-router'); \
+		const router = new SmartRouter(); \
+		router.getStats().then(stats => { \
+			console.log('Total queries:', stats.total); \
+			console.log('Ollama (local):', stats.ollama, '(' + (stats.ollama/stats.total*100).toFixed(1) + '%)'); \
+			console.log('Claude API:', stats.api, '(' + (stats.api/stats.total*100).toFixed(1) + '%)'); \
+			console.log('Cached:', stats.cached, '(' + (stats.cached/stats.total*100).toFixed(1) + '%)'); \
+			console.log('Cache hit rate:', stats.cacheHitRate); \
+		});"
+
+router-reset:
+	@echo "$(YELLOW)Resetting router cache...$(NC)"
+	@docker exec claude-redis redis-cli KEYS "query:*" | xargs docker exec claude-redis redis-cli DEL
+	@echo "$(GREEN)✅ Router cache reset!$(NC)"
+
+router-config:
+	@echo "$(GREEN)Smart Router Configuration:$(NC)"
+	@docker exec claude-flow-alpha env | grep -E "(OLLAMA|REDIS|CACHE|USE_)" | sort
+
+#
+# GPU Commands
+#
+
+gpu-info:
+	@echo "$(GREEN)GPU Information:$(NC)"
+	@if [ -f .detected-hardware.env ]; then \
+		. ./.detected-hardware.env && \
+		echo "GPU Type: $$GPU" && \
+		echo "GPU Name: $$GPU_NAME"; \
+	else \
+		echo "$(YELLOW)Hardware not detected. Run 'make v1.5-detect'$(NC)"; \
+	fi
+	@echo ""
+	@echo "GPU Status:"
+	@docker exec claude-ollama sh -c 'if command -v nvidia-smi > /dev/null; then nvidia-smi; elif command -v rocm-smi > /dev/null; then rocm-smi; else echo "No GPU tools found (CPU mode)"; fi' 2>/dev/null || echo "Container not running"
+
+gpu-test:
+	@echo "$(GREEN)Testing GPU acceleration...$(NC)"
+	@docker exec claude-ollama ollama run mistral "hello" --verbose 2>&1 | grep -i "gpu\|metal\|cuda\|rocm" || echo "Running on CPU"
+
+#
+# Migration Commands
+#
+
+migrate-v1.5:
+	@echo "$(GREEN)Migrating to v1.5...$(NC)"
+	@echo ""
+	@echo "This will:"
+	@echo "  1. Stop v1.0 containers"
+	@echo "  2. Start v1.5 containers"
+	@echo "  3. Keep all data"
+	@echo ""
+	@read -p "Continue? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+	@echo ""
+	@echo "$(YELLOW)Step 1: Creating backup...$(NC)"
+	@make backup
+	@echo ""
+	@echo "$(YELLOW)Step 2: Stopping v1.0...$(NC)"
+	@make stop
+	@echo ""
+	@echo "$(YELLOW)Step 3: Detecting hardware...$(NC)"
+	@make v1.5-detect
+	@echo ""
+	@echo "$(YELLOW)Step 4: Starting v1.5...$(NC)"
+	@make v1.5-start
+	@echo ""
+	@echo "$(YELLOW)Step 5: Verifying...$(NC)"
+	@make v1.5-verify
+	@echo ""
+	@echo "$(GREEN)✅ Migration complete!$(NC)"
+	@echo "Next: Run 'make ollama-init' to download models"
+
+rollback-v1.0:
+	@echo "$(RED)Rolling back to v1.0...$(NC)"
+	@echo ""
+	@read -p "This will stop v1.5 and start v1.0. Continue? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+	@make v1.5-stop
+	@git checkout main
+	@make start
+	@echo "$(GREEN)✅ Rolled back to v1.0$(NC)"
+
+#
+# Testing Commands
+#
+
+test:
+	@echo "$(GREEN)Running all tests...$(NC)"
+	@chmod +x tests/*.sh
+	@./tests/test-docker-build.sh
+	@./tests/test-mcp-connection.sh
+	@./tests/test-claude-flow.sh
+
+test-v1.5:
+	@echo "$(GREEN)Running v1.5 tests...$(NC)"
+	@chmod +x tests/*.sh
+	@./tests/test-ollama.sh
+	@./tests/test-gpu.sh
+	@./tests/test-smart-router.sh
+	@./tests/test-redis.sh
+
+test-ollama:
+	@chmod +x tests/test-ollama.sh
+	@./tests/test-ollama.sh
+
+test-gpu:
+	@chmod +x tests/test-gpu.sh
+	@./tests/test-gpu.sh
+
+#
+# Monitoring Commands
+#
+
+monitor:
+	@echo "$(GREEN)Monitoring services...$(NC)"
+	@docker stats
+
+stats:
+	@echo "$(GREEN)Resource Usage:$(NC)"
+	@docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
+
+#
+# Backup/Restore Commands
+#
+
+backup:
+	@echo "$(GREEN)Creating backup...$(NC)"
+	@mkdir -p backups
+	@docker exec claude-flow-alpha tar czf /workspace/backups/backup-$(shell date +%Y%m%d-%H%M%S).tar.gz \
+		/workspace/.hive-mind \
+		/workspace/.swarm \
+		/workspace/project
+	@echo "$(GREEN)✅ Backup created in backups/$(NC)"
+	@ls -lh backups/ | tail -1
+
+restore:
+	@if [ -z "$(BACKUP)" ]; then \
+		echo "$(RED)Error: BACKUP not specified$(NC)"; \
+		echo "Usage: make restore BACKUP=backup-20250104-120000.tar.gz"; \
+		exit 1; \
+	fi
+	@echo "$(YELLOW)Restoring backup: $(BACKUP)$(NC)"
+	@docker exec claude-flow-alpha tar xzf /workspace/backups/$(BACKUP) -C /
+	@echo "$(GREEN)✅ Backup restored!$(NC)"
+
+#
+# Utility Commands
+#
+
+hive-spawn:
+	@if [ -z "$(TASK)" ]; then \
+		echo "$(RED)Error: TASK not specified$(NC)"; \
+		echo "Usage: make hive-spawn TASK='build REST API'"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Spawning hive-mind for task: $(TASK)$(NC)"
+	@docker exec claude-flow-alpha npx claude-flow hive-mind spawn "$(TASK)" --claude
+
+swarm:
+	@if [ -z "$(TASK)" ]; then \
+		echo "$(RED)Error: TASK not specified$(NC)"; \
+		echo "Usage: make swarm TASK='implement feature'"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Starting swarm for task: $(TASK)$(NC)"
+	@docker exec claude-flow-alpha npx claude-flow swarm "$(TASK)" --claude
+
+memory-stats:
+	@docker exec claude-flow-alpha npx claude-flow memory stats
+
+memory-query:
+	@if [ -z "$(Q)" ]; then \
+		echo "$(RED)Error: Q not specified$(NC)"; \
+		echo "Usage: make memory-query Q='search term'"; \
+		exit 1; \
+	fi
+	@docker exec claude-flow-alpha npx claude-flow memory query "$(Q)"

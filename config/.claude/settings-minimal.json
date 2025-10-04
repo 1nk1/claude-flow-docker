@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "claude-flow-docker": {
+      "command": "docker",
+      "args": ["exec", "-i", "claude-flow-alpha", "npx", "claude-flow", "mcp"],
+      "env": {
+        "CLAUDE_FLOW_HOME": "/workspace",
+        "CLAUDE_FLOW_PROJECT": "/workspace/project"
+      }
+    }
+  },
+  "hooks": {
+    "preEditHook": {
+      "command": "docker",
+      "args": ["exec", "claude-flow-alpha", "npx", "claude-flow", "hooks", "pre-edit", "--file", "${file}", "--auto-assign-agents", "true"],
+      "alwaysRun": false
+    },
+    "postEditHook": {
+      "command": "docker",
+      "args": ["exec", "claude-flow-alpha", "npx", "claude-flow", "hooks", "post-edit", "--file", "${file}", "--format", "true"],
+      "alwaysRun": true
+    },
+    "sessionStartHook": {
+      "command": "docker",
+      "args": ["exec", "claude-flow-alpha", "npx", "claude-flow", "hooks", "session-start"],
+      "alwaysRun": true
+    },
+    "sessionEndHook": {
+      "command": "docker",
+      "args": ["exec", "claude-flow-alpha", "npx", "claude-flow", "hooks", "session-end", "--generate-summary", "true"],
+      "alwaysRun": true
+    }
+  }
+}

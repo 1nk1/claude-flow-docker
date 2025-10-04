@@ -1,9 +1,28 @@
 # 🐳 Claude-Flow Docker
 
+[![Stars](https://img.shields.io/github/stars/1nk1/claude-flow-docker?style=for-the-badge&logo=github&color=yellow)](https://github.com/1nk1/claude-flow-docker)
+[![Downloads](https://img.shields.io/github/downloads/1nk1/claude-flow-docker/total?style=for-the-badge&logo=github&color=blue)](https://github.com/1nk1/claude-flow-docker/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/v1.0.0-blue?style=for-the-badge&label=VERSION)](https://github.com/1nk1/claude-flow-docker/releases/tag/v1.0.0)
+[![Node.js](https://img.shields.io/badge/node-22.x-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/docker-20.10+-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
+[![Claude Code](https://img.shields.io/badge/CLAUDE_CODE-INTEGRATED-green?style=for-the-badge)](https://docs.anthropic.com/)
+
+[![Agentics Foundation](https://img.shields.io/badge/AGENTICS-FOUNDATION-red?style=for-the-badge)](#)
+[![Hive-Mind](https://img.shields.io/badge/🐝_HIVE--MIND-AI_COORDINATION-purple?style=for-the-badge)](#)
+[![Neural](https://img.shields.io/badge/NEURAL-27_MODELS-orange?style=for-the-badge)](#)
+[![MCP Tools](https://img.shields.io/badge/MCP_TOOLS-87-blue?style=for-the-badge)](#)
+
+[![License](https://img.shields.io/badge/LICENSE-MIT-yellow?style=for-the-badge)](LICENSE)
+
+---
+
+**CI/CD Status:**
+
 [![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-22.x-brightgreen.svg)](https://nodejs.org/)
-[![Docker](https://img.shields.io/badge/docker-20.10+-blue.svg)](https://www.docker.com/)
+[![MCP Tests](https://github.com/1nk1/claude-flow-docker/actions/workflows/mcp-integration.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/mcp-integration.yml)
+[![Docs](https://github.com/1nk1/claude-flow-docker/actions/workflows/docs.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docs.yml)
+
+---
 
 > 🚀 Isolated Docker environment for [Claude-Flow](https://github.com/ruvnet/claude-flow) with local Claude Code integration
 
@@ -250,8 +269,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 🐛 [Report Bug](https://github.com/1nk1/claude-flow-docker/issues)
 - 💡 [Request Feature](https://github.com/1nk1/claude-flow-docker/issues)
-- 📖 [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
-- 💬 [Discussions](https://github.com/1nk1/claude-flow-docker)
+- 📖 
 
 ## ⭐ Star History
 

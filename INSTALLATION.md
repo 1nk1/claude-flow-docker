@@ -259,7 +259,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize"}' | \
 
 - Check [Troubleshooting Guide](TROUBLESHOOTING.md)
 - Open an [Issue](https://github.com/1nk1/claude-flow-docker/issues)
-- Read [Documentation](https://github.com/1nk1/claude-flow-docker/wiki)
+- Read 
 
 ## 📋 System Requirements
 
