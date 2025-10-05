@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   claude-flow:
     build:
@@ -7,24 +5,24 @@ services:
       dockerfile: Dockerfile
     container_name: claude-flow-alpha
     hostname: claude-flow
-    
+
     # Volumes для persistent storage
     volumes:
       # Рабочая директория проекта (bind mount для доступа к файлам)
       - ./project:/workspace/project
-      
+
       # Persistent storage для Claude-Flow
       - claude-flow-hive:/workspace/.hive-mind
       - claude-flow-swarm:/workspace/.swarm
       - claude-flow-memory:/workspace/memory
       - claude-flow-coordination:/workspace/coordination
-      
+
       # Конфигурация (опционально)
       - ./config/.claude:/workspace/.claude
-      
+
       # Логи
       - ./logs:/workspace/logs
-    
+
     # Переменные окружения
     environment:
       - NODE_ENV=development
@@ -33,28 +31,27 @@ services:
       - CLAUDE_FLOW_LOG_LEVEL=info
       - MCP_SERVER_MODE=stdio
       - SQLITE_TMPDIR=/workspace/.swarm
-      
+
     # Сеть
     networks:
       - claude-flow-net
-    
+
     # Resource limits
     deploy:
       resources:
         limits:
-          cpus: '4'
-          memory: 4G
+          cpus: "${CONTAINER_CPU_LIMIT}"
+          memory: "${CONTAINER_MEMORY_LIMIT}"
         reservations:
-          cpus: '2'
-          memory: 2G
-    
+          cpus: "${CONTAINER_CPU_RESERVATION}"
+          memory: "${CONTAINER_MEMORY_RESERVATION}"
     # Restart policy
     restart: unless-stopped
-    
+
     # Stdin/stdout для MCP communication
     stdin_open: true
     tty: true
-    
+
     # Команда для keep alive
     command: tail -f /dev/null
 
