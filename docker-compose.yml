@@ -23,15 +23,18 @@ services:
       # Логи
       - ./logs:/workspace/logs
     
+    ports:
+      - "8811:8811" 
+    
     # Переменные окружения
     environment:
       - NODE_ENV=development
       - CLAUDE_FLOW_HOME=/workspace
       - CLAUDE_FLOW_PROJECT=/workspace/project
       - CLAUDE_FLOW_LOG_LEVEL=info
-      - MCP_SERVER_MODE=stdio
+      - MCP_SERVER_MODE=tcp
+      - MCP_SERVER_PORT=8811
       - SQLITE_TMPDIR=/workspace/.swarm
-      
     # Сеть
     networks:
       - claude-flow-net
