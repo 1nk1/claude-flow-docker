@@ -207,6 +207,25 @@ agents-logs: ## View agent activity logs (live)
 agents-tail: ## Last 50 lines of agent logs
 	@docker exec $(CONTAINER_NAME) tail -n 50 /workspace/logs/agents.log
 
+test-agents: ## Test REAL agent workflows (not demo)
+	@echo "$(BLUE)🚀 Testing real agent workflows...$(NC)"
+	@./test-real-agents.sh
+
+demo-agents: ## Run agent visualization demo
+	@echo "$(BLUE)🎨 Running agent demo...$(NC)"
+	@./demo-agents.sh
+
+cf-memory: ## View claude-flow memory stats
+	@echo "$(PURPLE)💾 Claude-Flow Memory Statistics...$(NC)"
+	@docker exec $(CONTAINER_NAME) claude-flow memory stats
+
+cf-hive: ## Initialize hive-mind system
+	@echo "$(YELLOW)🐝 Initializing Hive-Mind...$(NC)"
+	@docker exec $(CONTAINER_NAME) claude-flow hive-mind init
+
+cf-query: ## Query memory (usage: make cf-query Q="search term")
+	@docker exec $(CONTAINER_NAME) claude-flow memory query "$(Q)"
+
 stats: ## Resource usage statistics
 	@docker stats $(CONTAINER_NAME) --no-stream
 
