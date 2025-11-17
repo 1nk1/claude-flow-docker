@@ -6,33 +6,37 @@ services:
     container_name: claude-flow-alpha
     hostname: claude-flow
 
-    # Volumes для persistent storage
+    # Volumes for persistent storage
     volumes:
-      # Рабочая директория проекта (bind mount для доступа к файлам)
+      # Project working directory (bind mount for file access)
       - ./project:/workspace/project
 
-      # Persistent storage для Claude-Flow
+      # Persistent storage for Claude-Flow
       - claude-flow-hive:/workspace/.hive-mind
       - claude-flow-swarm:/workspace/.swarm
       - claude-flow-memory:/workspace/memory
       - claude-flow-coordination:/workspace/coordination
 
-      # Конфигурация (опционально)
+      # Configuration (optional)
       - ./config/.claude:/workspace/.claude
 
-      # Логи
+      # Logs
       - ./logs:/workspace/logs
 
-    # Переменные окружения
+    # Environment variables
     environment:
       - NODE_ENV=development
       - CLAUDE_FLOW_HOME=/workspace
       - CLAUDE_FLOW_PROJECT=/workspace/project
-      - CLAUDE_FLOW_LOG_LEVEL=info
+      - CLAUDE_FLOW_LOG_LEVEL=debug
+      - CLAUDE_FLOW_DEBUG=true
+      - CLAUDE_FLOW_VERBOSE=true
       - MCP_SERVER_MODE=stdio
+      - MCP_DEBUG=true
+      - MCP_LOG_LEVEL=debug
       - SQLITE_TMPDIR=/workspace/.swarm
 
-    # Сеть
+    # Network
     networks:
       - claude-flow-net
 
@@ -48,14 +52,14 @@ services:
     # Restart policy
     restart: unless-stopped
 
-    # Stdin/stdout для MCP communication
+    # Stdin/stdout for MCP communication
     stdin_open: true
     tty: true
 
-    # Команда для keep alive
+    # Command to keep alive
     command: tail -f /dev/null
 
-  # Опциональный service для Flow Nexus Cloud (если нужен)
+  # Optional service for Flow Nexus Cloud (if needed)
   flow-nexus:
     image: node:18-alpine
     container_name: flow-nexus-bridge

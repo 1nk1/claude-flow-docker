@@ -263,7 +263,7 @@ inspect: ## Detailed container information (JSON)
 # CLAUDE-FLOW SPECIFIC
 # ═══════════════════════════════════════════════════════════════
 
-cf-status: ## Статус Claude-Flow (hive-mind + memory)
+cf-status: ## Claude-Flow status (hive-mind + memory)
 	@echo "$(BLUE)$(BEE) Hive-Mind Status:$(NC)"
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha hive-mind status 2>/dev/null || echo "  No active sessions"
 	@echo ""
@@ -271,12 +271,12 @@ cf-status: ## Статус Claude-Flow (hive-mind + memory)
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha memory stats 2>/dev/null || echo "  No memory data"
 	@echo ""
 
-cf-init: ## Инициализировать Claude-Flow в проекте
+cf-init: ## Initialize Claude-Flow in project
 	@echo "$(BLUE)$(PACKAGE) Initializing Claude-Flow...$(NC)"
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npx claude-flow@alpha init --force"
 	@echo "$(GREEN)$(CHECK) Initialized$(NC)"
 
-hive-spawn: ## Создать hive-mind (make hive-spawn TASK="build API")
+hive-spawn: ## Spawn hive-mind (make hive-spawn TASK="build API")
 	@if [ -z "$(TASK)" ]; then \
 		echo "$(RED)$(CROSS) Usage: make hive-spawn TASK=\"your task\"$(NC)"; \
 		exit 1; \
@@ -284,15 +284,15 @@ hive-spawn: ## Создать hive-mind (make hive-spawn TASK="build API")
 	@echo "$(BLUE)$(BEE) Spawning hive-mind: $(TASK)$(NC)"
 	@docker exec -it $(CONTAINER_NAME) npx claude-flow@alpha hive-mind spawn "$(TASK)" --claude
 
-hive-list: ## Список активных hive-mind сессий
+hive-list: ## List active hive-mind sessions
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha hive-mind list
 
-hive-kill: ## Убить все hive-mind сессии
+hive-kill: ## Kill all hive-mind sessions
 	@echo "$(RED)$(FIRE) Killing all hive-mind sessions...$(NC)"
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha hive-mind kill-all
 	@echo "$(GREEN)$(CHECK) All sessions killed$(NC)"
 
-swarm: ## Запустить swarm задачу (make swarm TASK="your task")
+swarm: ## Run swarm task (make swarm TASK="your task")
 	@if [ -z "$(TASK)" ]; then \
 		echo "$(RED)$(CROSS) Usage: make swarm TASK=\"your task\"$(NC)"; \
 		exit 1; \
@@ -300,17 +300,17 @@ swarm: ## Запустить swarm задачу (make swarm TASK="your task")
 	@echo "$(BLUE)🌊 Running swarm: $(TASK)$(NC)"
 	@docker exec -it $(CONTAINER_NAME) npx claude-flow@alpha swarm "$(TASK)" --claude
 
-memory-stats: ## Статистика памяти Claude-Flow
+memory-stats: ## Claude-Flow memory statistics
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha memory stats
 
-memory-query: ## Поиск в памяти (make memory-query Q="auth")
+memory-query: ## Query memory (make memory-query Q="auth")
 	@if [ -z "$(Q)" ]; then \
 		echo "$(RED)$(CROSS) Usage: make memory-query Q=\"search term\"$(NC)"; \
 		exit 1; \
 	fi
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha memory query "$(Q)"
 
-memory-clear: ## Очистить память (ОСТОРОЖНО!)
+memory-clear: ## Clear memory (CAUTION!)
 	@echo "$(RED)$(WARNING) This will clear all memory data!$(NC)"
 	@read -p "Are you sure? [y/N] " -n 1 -r; \
 	echo; \
@@ -325,7 +325,7 @@ memory-clear: ## Очистить память (ОСТОРОЖНО!)
 # BACKUP & RESTORE
 # ═══════════════════════════════════════════════════════════════
 
-backup: ## Создать backup всех volumes
+backup: ## Create backup of all volumes
 	@echo "$(BLUE)$(BACKUP) Creating backup...$(NC)"
 	@mkdir -p backups
 	@echo "  Backing up swarm data..."
@@ -346,11 +346,11 @@ backup: ## Создать backup всех volumes
 	@echo "$(GREEN)$(CHECK) Backup created in ./backups/$(NC)"
 	@ls -lh backups/ | tail -3
 
-backup-list: ## Список всех backups
+backup-list: ## List all backups
 	@echo "$(BLUE)$(BACKUP) Available backups:$(NC)"
 	@ls -lh backups/ 2>/dev/null || echo "No backups found"
 
-restore: ## Восстановить из backup (make restore BACKUP=swarm-20231016-120000.tar.gz)
+restore: ## Restore from backup (make restore BACKUP=swarm-20231016-120000.tar.gz)
 	@if [ -z "$(BACKUP)" ]; then \
 		echo "$(RED)$(CROSS) Usage: make restore BACKUP=filename.tar.gz$(NC)"; \
 		echo ""; \
@@ -381,17 +381,17 @@ restore: ## Восстановить из backup (make restore BACKUP=swarm-2023
 # CLEANUP & MAINTENANCE
 # ═══════════════════════════════════════════════════════════════
 
-clean: ## Остановить и удалить контейнеры
+clean: ## Stop and remove containers
 	@echo "$(BLUE)$(CLEAN) Cleaning up containers...$(NC)"
 	@docker-compose down
 	@echo "$(GREEN)$(CHECK) Cleanup complete$(NC)"
 
-clean-images: ## Удалить неиспользуемые образы
+clean-images: ## Remove unused images
 	@echo "$(BLUE)$(CLEAN) Removing unused images...$(NC)"
 	@docker image prune -f
 	@echo "$(GREEN)$(CHECK) Images cleaned$(NC)"
 
-clean-volumes: ## Удалить volumes (УДАЛИТ ВСЕ ДАННЫЕ!)
+clean-volumes: ## Remove volumes (DELETES ALL DATA!)
 	@echo "$(RED)$(WARNING) This will DELETE ALL Claude-Flow data!$(NC)"
 	@echo "$(YELLOW)Volumes to be removed:$(NC)"
 	@docker volume ls | grep claude-flow
@@ -404,26 +404,26 @@ clean-volumes: ## Удалить volumes (УДАЛИТ ВСЕ ДАННЫЕ!)
 		echo "$(YELLOW)Cancelled (you must type 'yes')$(NC)"; \
 	fi
 
-clean-all: clean clean-images ## Полная очистка (контейнеры + образы)
+clean-all: clean clean-images ## Full cleanup (containers + images)
 	@echo "$(GREEN)$(CHECK) Full cleanup complete$(NC)"
 
-prune: ## Docker system prune (освободить место)
+prune: ## Docker system prune (free space)
 	@echo "$(BLUE)$(CLEAN) Running Docker system prune...$(NC)"
 	@docker system prune -f
 	@echo "$(GREEN)$(CHECK) System pruned$(NC)"
 
-reset: clean-volumes build start ## Полный reset (пересоздать всё)
+reset: clean-volumes build start ## Full reset (recreate everything)
 	@echo "$(GREEN)$(CHECK) System reset complete$(NC)"
 
 # ═══════════════════════════════════════════════════════════════
 # DEVELOPMENT & TESTING
 # ═══════════════════════════════════════════════════════════════
 
-dev: ## Режим разработки (logs + watch)
+dev: ## Development mode (logs + watch)
 	@echo "$(CYAN)$(EYES) Development mode - watching logs...$(NC)"
 	@docker-compose logs -f
 
-test: ## Базовое тестирование
+test: ## Basic testing
 	@echo "$(BLUE)$(TEST) Running basic tests...$(NC)"
 	@echo "  Testing Node.js..."
 	@docker exec $(CONTAINER_NAME) node --version
@@ -433,21 +433,21 @@ test: ## Базовое тестирование
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha --version
 	@echo "$(GREEN)$(CHECK) All tests passed$(NC)"
 
-test-memory: ## Тест системы памяти
+test-memory: ## Test memory system
 	@echo "$(BLUE)$(TEST) Testing memory system...$(NC)"
 	@docker exec $(CONTAINER_NAME) npx claude-flow@alpha memory stats
 	@docker exec $(CONTAINER_NAME) sh -c "ls -lh /workspace/.swarm/"
 	@echo "$(GREEN)$(CHECK) Memory system OK$(NC)"
 
-test-mcp: ## Тест MCP серверов
+test-mcp: ## Test MCP servers
 	@echo "$(BLUE)$(TEST) Testing MCP servers...$(NC)"
 	@docker exec $(CONTAINER_NAME) cat /workspace/.claude/settings.json
 	@echo "$(GREEN)$(CHECK) MCP configuration OK$(NC)"
 
-test-all: test test-memory test-mcp ## Полное тестирование
+test-all: test test-memory test-mcp ## Full testing suite
 	@echo "$(GREEN)$(CHECK) All tests completed$(NC)"
 
-lint-dockerfile: ## Линт Dockerfile (требует hadolint)
+lint-dockerfile: ## Lint Dockerfile (requires hadolint)
 	@if command -v hadolint >/dev/null 2>&1; then \
 		echo "$(BLUE)$(TEST) Linting Dockerfile...$(NC)"; \
 		hadolint Dockerfile; \
@@ -460,7 +460,7 @@ lint-dockerfile: ## Линт Dockerfile (требует hadolint)
 # PACKAGE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════
 
-npm-install: ## Установить npm пакет (make npm-install PKG="lodash")
+npm-install: ## Install npm package (make npm-install PKG="lodash")
 	@if [ -z "$(PKG)" ]; then \
 		echo "$(RED)$(CROSS) Usage: make npm-install PKG=\"package-name\"$(NC)"; \
 		exit 1; \
@@ -469,19 +469,19 @@ npm-install: ## Установить npm пакет (make npm-install PKG="lodas
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npm install $(PKG)"
 	@echo "$(GREEN)$(CHECK) Package installed$(NC)"
 
-npm-update: ## Обновить все npm пакеты в проекте
+npm-update: ## Update all npm packages in project
 	@echo "$(BLUE)$(PACKAGE) Updating npm packages...$(NC)"
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npm update"
 	@echo "$(GREEN)$(CHECK) Packages updated$(NC)"
 
-npm-outdated: ## Проверить устаревшие пакеты
+npm-outdated: ## Check outdated packages
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npm outdated"
 
-npm-audit: ## Проверка безопасности npm пакетов
+npm-audit: ## Audit npm package security
 	@echo "$(BLUE)$(LOCK) Running npm audit...$(NC)"
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npm audit"
 
-npm-audit-fix: ## Автофикс уязвимостей npm
+npm-audit-fix: ## Auto-fix npm vulnerabilities
 	@echo "$(BLUE)$(LOCK) Fixing npm vulnerabilities...$(NC)"
 	@docker exec $(CONTAINER_NAME) sh -c "cd /workspace/project && npm audit fix"
 	@echo "$(GREEN)$(CHECK) Vulnerabilities fixed$(NC)"
@@ -490,16 +490,16 @@ npm-audit-fix: ## Автофикс уязвимостей npm
 # CI/CD HELPERS
 # ═══════════════════════════════════════════════════════════════
 
-ci-build: ## CI: Сборка образа
+ci-build: ## CI: Build image
 	@docker-compose build --pull --no-cache
 
-ci-test: ## CI: Запуск тестов
+ci-test: ## CI: Run tests
 	@docker-compose up -d
 	@sleep 5
 	@make test-all
 	@docker-compose down
 
-ci-deploy: ## CI: Деплой (пример)
+ci-deploy: ## CI: Deploy (example)
 	@echo "$(BLUE)$(ROCKET) Deploying to production...$(NC)"
 	@docker-compose -f docker-compose.prod.yml up -d
 	@echo "$(GREEN)$(CHECK) Deployed$(NC)"
@@ -508,16 +508,16 @@ ci-deploy: ## CI: Деплой (пример)
 # UTILITIES
 # ═══════════════════════════════════════════════════════════════
 
-port-check: ## Проверить занятость портов
+port-check: ## Check port availability
 	@echo "$(BLUE)Checking ports...$(NC)"
 	@echo "  Port 8811 (MCP): $$(lsof -i :8811 | grep LISTEN || echo 'FREE')"
 	@echo "  Port 3000 (Web): $$(lsof -i :3000 | grep LISTEN || echo 'FREE')"
 
-disk-usage: ## Использование диска Docker
+disk-usage: ## Docker disk usage
 	@echo "$(BLUE)$(MEMORY) Docker disk usage:$(NC)"
 	@docker system df
 
-volume-inspect: ## Инспекция volumes
+volume-inspect: ## Inspect volumes
 	@echo "$(BLUE)$(MEMORY) Volume details:$(NC)"
 	@docker volume ls | grep claude-flow | while read driver name; do \
 		echo ""; \
@@ -525,13 +525,13 @@ volume-inspect: ## Инспекция volumes
 		docker volume inspect $$name | grep -A 10 "Mountpoint"; \
 	done
 
-config-show: ## Показать текущую конфигурацию docker-compose
+config-show: ## Show current docker-compose config
 	@docker-compose config
 
-env-show: ## Показать переменные окружения
+env-show: ## Show environment variables
 	@docker exec $(CONTAINER_NAME) env | sort
 
-update-deps: ## Обновить все зависимости системы
+update-deps: ## Update all system dependencies
 	@echo "$(BLUE)$(PACKAGE) Updating system dependencies...$(NC)"
 	@docker exec -u root $(CONTAINER_NAME) apk update
 	@docker exec -u root $(CONTAINER_NAME) apk upgrade
@@ -553,7 +553,7 @@ cf: cf-status   ## Alias: cf-status
 # DOCUMENTATION
 # ═══════════════════════════════════════════════════════════════
 
-docs: ## Открыть документацию
+docs: ## Open documentation
 	@echo "$(CYAN)📚 Opening documentation...$(NC)"
 	@echo ""
 	@echo "📖 Claude-Flow Documentation:"
@@ -566,21 +566,21 @@ docs: ## Открыть документацию
 	@echo "   https://webdriver.io"
 	@echo ""
 
-readme: ## Создать README.md
+readme: ## Generate README.md
 	@echo "# Claude-Flow Docker" > README.md
 	@echo "" >> README.md
-	@echo "Docker-контейнер для Claude-Flow с полной настройкой и автоматизацией." >> README.md
+	@echo "Docker container for Claude-Flow with full configuration and automation." >> README.md
 	@echo "" >> README.md
-	@echo "## Быстрый старт" >> README.md
+	@echo "## Quick Start" >> README.md
 	@echo "" >> README.md
 	@echo "\`\`\`bash" >> README.md
-	@echo "make setup   # Первоначальная настройка" >> README.md
-	@echo "make build   # Сборка образа" >> README.md
-	@echo "make start   # Запуск контейнера" >> README.md
-	@echo "make info    # Информация о системе" >> README.md
+	@echo "make setup   # Initial setup" >> README.md
+	@echo "make build   # Build image" >> README.md
+	@echo "make start   # Start container" >> README.md
+	@echo "make info    # System information" >> README.md
 	@echo "\`\`\`" >> README.md
 	@echo "" >> README.md
-	@echo "## Команды" >> README.md
+	@echo "## Commands" >> README.md
 	@echo "" >> README.md
 	@make help >> README.md
 	@echo "$(GREEN)$(CHECK) README.md created$(NC)"
