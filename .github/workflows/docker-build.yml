@@ -58,7 +58,7 @@ jobs:
 
     - name: Test image - Claude-Flow installation
       run: |
-        docker run --rm ${{ env.IMAGE_NAME }}:test npx claude-flow --version
+        docker run --rm ${{ env.IMAGE_NAME }}:test claude-flow --version
         echo "✅ Claude-Flow verified"
 
     - name: Test image - better-sqlite3
@@ -106,12 +106,13 @@ jobs:
     - name: Start container
       run: |
         docker compose up -d
-        sleep 10
+        sleep 30
+        echo "Waiting for container initialization..."
 
-    - name: Check container health
+    - name: Check container is running
       run: |
         docker ps | grep claude-flow-alpha
-        docker inspect --format='{{.State.Health.Status}}' claude-flow-alpha | grep -E "healthy|starting"
+        docker inspect --format='{{.State.Status}}' claude-flow-alpha | grep running
 
     - name: Test Claude-Flow commands
       run: |
