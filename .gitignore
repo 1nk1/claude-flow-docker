@@ -2,112 +2,56 @@
 .env
 .env.local
 .env.*.local
+.env.bak
+.env.backup
+*.env.bak
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Docker volumes and data
+# Docker volumes
 project/*
 !project/.gitkeep
-backups/*
-!backups/.gitkeep
+
+# Backups
+backups/*.tar.gz
 
 # OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+*.swp
+*.swo
+*~
 
 # IDE
 .vscode/*
 !.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
-*.swp
-*.swo
-*~
 .idea/
 *.iml
-*.iws
-*.ipr
+.project
+.classpath
+.settings/
 
-# Node modules (if any local testing)
+# Node
 node_modules/
-npm-debug.log
-yarn-error.log
+package-lock.json
 
-# Test artifacts
-test-results/
-coverage/
-.nyc_output/
+# Claude sessions
+config/.claude/sessions/
+*.session
 
 # Temporary files
-*.tmp
-*.temp
 tmp/
 temp/
+*.tmp
 
-# Backup files
-*.backup
-*.bak
-*~
-
-# Claude-Flow specific
-.hive-mind/
+# Claude Flow runtime data (should be in Docker volumes)
+.claude-flow/
 .swarm/
-memory/
-coordination/
+.project-history
 
-# Docker override
-docker-compose.override.yml
-
-# macOS
-.AppleDouble
-.LSOverride
-Icon
-._*
-
-# Linux
-*~
-.directory
-.Trash-*
-
-# Windows
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-*.stackdump
-[Dd]esktop.ini
-$RECYCLE.BIN/
-*.lnk
-
-# Archives
-*.tar
-*.tar.gz
-*.zip
-*.rar
-*.7z
-
-# Sensitive data
-secrets/
-*.pem
-*.key
-*.cert
-*.crt
-id_rsa*
-*.gpg
+# Cleanup reports
+CLEANUP_REPORT.md

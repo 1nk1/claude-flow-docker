@@ -1,136 +1,20 @@
 {
   "mcpServers": {
-    "claude-flow-docker": {
+    "claude-flow": {
       "command": "docker",
       "args": [
         "exec",
         "-i",
         "claude-flow-alpha",
-        "npx",
         "claude-flow",
-        "mcp"
+        "mcp",
+        "start"
       ],
       "env": {
         "CLAUDE_FLOW_HOME": "/workspace",
         "CLAUDE_FLOW_PROJECT": "/workspace/project",
-        "NODE_ENV": "development"
-	"MCP_SERVER_MODE": "tcp",
-  	"MCP_SERVER_PORT": 8811
-      },
-      "description": "Claude-Flow MCP server running in Docker container"
-    },
-    "claude-flow-hive": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "hive-mind",
-        "mcp"
-      ],
-      "env": {
-        "CLAUDE_FLOW_HOME": "/workspace"
-      },
-      "description": "Hive-Mind orchestration MCP server"
-    },
-    "claude-flow-memory": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "memory",
-        "mcp"
-      ],
-      "env": {
         "CLAUDE_FLOW_STORAGE": "/workspace/.swarm"
-      },
-      "description": "Memory and knowledge base MCP server"
-    },
-    "claude-flow-github": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "github",
-        "mcp"
-      ],
-      "description": "GitHub integration MCP server"
+      }
     }
-  },
-  "hooks": {
-    "preEditHook": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "hooks",
-        "pre-edit",
-        "--file",
-        "${file}",
-        "--auto-assign-agents",
-        "true"
-      ],
-      "alwaysRun": false,
-      "description": "Pre-edit validation and agent assignment"
-    },
-    "postEditHook": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "hooks",
-        "post-edit",
-        "--file",
-        "${file}",
-        "--format",
-        "true"
-      ],
-      "alwaysRun": true,
-      "description": "Post-edit formatting and learning"
-    },
-    "sessionStartHook": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "hooks",
-        "session-start",
-        "--restore-context",
-        "true"
-      ],
-      "alwaysRun": true,
-      "description": "Restore previous session context"
-    },
-    "sessionEndHook": {
-      "command": "docker",
-      "args": [
-        "exec",
-        "claude-flow-alpha",
-        "npx",
-        "claude-flow",
-        "hooks",
-        "session-end",
-        "--generate-summary",
-        "true"
-      ],
-      "alwaysRun": true,
-      "description": "Generate session summary and persist state"
-    }
-  },
-  "debugLogging": true,
-  "logLevel": "info"
+  }
 }

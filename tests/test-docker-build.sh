@@ -3,7 +3,7 @@
 
 set -e
 
-echo "🧪 Testing Docker Build..."
+echo " Testing Docker Build..."
 echo "================================"
 
 # Colors for output
@@ -20,13 +20,13 @@ TESTS_FAILED=0
 run_test() {
     local test_name="$1"
     local test_command="$2"
-    
+
     echo -e "${BLUE}Test: $test_name${NC}"
     if eval "$test_command"; then
-        echo -e "${GREEN}✅ PASSED${NC}\n"
+        echo -e "${GREEN} PASSED${NC}\n"
         ((TESTS_PASSED++))
     else
-        echo -e "${RED}❌ FAILED${NC}\n"
+        echo -e "${RED} FAILED${NC}\n"
         ((TESTS_FAILED++))
     fi
 }
@@ -102,9 +102,9 @@ echo -e "${RED}Failed: $TESTS_FAILED${NC}"
 echo "================================"
 
 if [ $TESTS_FAILED -eq 0 ]; then
-    echo -e "${GREEN}🎉 All tests passed!${NC}"
+    echo -e "${GREEN} All tests passed!${NC}"
     exit 0
 else
-    echo -e "${RED}❌ Some tests failed${NC}"
+    echo -e "${RED} Some tests failed${NC}"
     exit 1
 fi

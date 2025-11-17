@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "claude-flow": {
+      "command": "docker",
+      "args": ["exec", "-i", "claude-flow-alpha", "npx", "claude-flow@alpha", "mcp", "start"],
+      "env": {
+        "CLAUDE_FLOW_HOME": "/workspace",
+        "CLAUDE_FLOW_PROJECT": "/workspace/project",
+        "CLAUDE_FLOW_STORAGE": "/workspace/.swarm"
+      }
+    }
+  }
+}

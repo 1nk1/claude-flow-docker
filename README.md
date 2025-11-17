@@ -17,6 +17,7 @@ Full-featured AI orchestration in a Docker container with automatic MCP server s
 - 💾 **SQLite Persistent Storage** - Data persists between runs
 - 🪝 **Hooks System** - Workflow automation (pre/post edit, sessions)
 - 🔗 **Local MCP Integration** - Connect to Claude Code without global install
+- 📊 **Advanced Logging** - Multi-level logging with file persistence and auto-rotation
 - 📦 **Node.js 22** - Latest LTS version
 - 🛡️ **Isolated Environment** - Doesn't affect your system
 
@@ -50,23 +51,34 @@ cp config/.claude/settings.json /path/to/your/project/.claude/
 # Check status
 make status
 
-# Check versions
-./cf-exec.sh node --version        # v22.x.x
-./cf-exec.sh claude-flow --version # v2.5.0-alpha
+# Check container logs
+docker logs claude-flow-alpha
 
-# First command
-./cf-exec.sh claude-flow hive-mind status
+# View application logs
+docker exec claude-flow-alpha tail -f /workspace/logs/claude-flow.log
+
+# Test claude-flow
+docker exec -it claude-flow-alpha claude-flow --version
 ```
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [QUICKSTART.md](QUICKSTART.md) | ⚡ Get started in 3 minutes |
-| [INSTALLATION.md](INSTALLATION.md) | 📖 Complete installation guide |
-| [INTEGRATION.md](INTEGRATION.md) | 💡 Claude Code integration examples |
-| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | 🔧 Common issues and solutions |
-| [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) | 📊 Project overview |
+### Getting Started
+- [Quick Start](docs/getting-started/quick-start.md) - ⚡ Get started in 3 minutes
+- [Installation Guide](docs/getting-started/INSTALLATION.md) - 📖 Complete installation guide
+- [Troubleshooting](docs/getting-started/TROUBLESHOOTING.md) - 🔧 Common issues and solutions
+
+### Guides
+- [Deployment Guide](docs/guides/DEPLOYMENT.md) - 🚀 Production deployment
+- [Integration Guide](docs/guides/INTEGRATION.md) - 💡 Claude Code integration examples
+- [Logging System](docs/guides/LOGGING.md) - 📊 Comprehensive logging guide
+
+### MCP Integration
+- [MCP Setup](docs/mcp/README.md) - 🔌 MCP server setup and usage
+- [MCP Connection](docs/mcp/connection.md) - 🔗 Detailed connection guide
+
+### Development
+- [Contributing](docs/development/CONTRIBUTING.md) - 🤝 How to contribute
 
 ## 🎮 Main Commands
 
@@ -103,10 +115,28 @@ make restore BACKUP=file.tar.gz
 ### Direct Execution
 
 ```bash
-./cf-exec.sh claude-flow hive-mind spawn "task" --claude
-./cf-exec.sh claude-flow swarm "task" --claude
-./cf-exec.sh claude-flow memory stats
+docker exec -it claude-flow-alpha claude-flow hive-mind spawn "task" --claude
+docker exec -it claude-flow-alpha claude-flow swarm "task" --claude
+docker exec -it claude-flow-alpha claude-flow memory stats
 ```
+
+### Logging
+
+```bash
+# View real-time logs
+docker logs -f claude-flow-alpha
+
+# Application logs
+docker exec claude-flow-alpha tail -f /workspace/logs/claude-flow.log
+
+# Log statistics
+docker exec claude-flow-alpha bash -c "source /workspace/lib/logger.sh && log_stats"
+
+# Search for errors
+docker exec claude-flow-alpha grep ERROR /workspace/logs/claude-flow.log
+```
+
+See [Logging Guide](docs/guides/LOGGING.md) for complete logging documentation.
 
 ## 🔗 Claude Code Integration
 
@@ -141,28 +171,44 @@ Claude automatically uses MCP tools from the Docker container! 🎉
 
 ```
 claude-flow-docker/
-├── .github/                    # GitHub Actions workflows
-│   ├── workflows/
-│   │   ├── docker-build.yml   # Build and test Docker image
-│   │   └── docs.yml           # Documentation checks
-│   └── ISSUE_TEMPLATE/        # Issue templates
-├── config/                     # Configuration
-│   └── .claude/
-│       └── settings.json      # MCP configuration
+├── config/                     # Configuration templates
+│   └── .claude/               # Claude-Flow MCP configuration
+│       ├── agents/            # 75+ agent templates
+│       ├── commands/          # 150+ command files
+│       ├── helpers/           # Helper scripts
+│       ├── settings/          # Settings files
+│       └── system-prompts/    # System prompts
+├── project/                    # Project workspace
+│   ├── .claude -> ../config/.claude  # Symlink to config
+│   └── memory/                # Persistent memory storage
+├── docs/                       # Documentation
+│   ├── getting-started/       # Quick start guides
+│   ├── guides/                # Comprehensive guides
+│   ├── mcp/                   # MCP integration docs
+│   └── development/           # Development guides
+├── scripts/                    # Utility scripts
+│   ├── setup.sh
+│   ├── connect-mcp.sh
+│   ├── switch-project.sh
+│   └── view-logs.sh
 ├── tests/                      # Test scripts
 │   ├── test-docker-build.sh
 │   ├── test-mcp-connection.sh
 │   └── test-claude-flow.sh
-├── docs/                       # Additional documentation
+├── docker/                     # Docker utilities
+│   ├── update-claude-code.sh
+│   ├── rollback-claude-code.sh
+│   └── check-claude-versions.sh
+├── lib/                        # Libraries
+│   └── logger.sh              # Logging library
+├── logs/                       # Log files
+│   └── claude-flow.log
 ├── Dockerfile                  # Node.js 22 + Claude-Flow
 ├── docker-compose.yml          # Orchestration
-├── docker-entrypoint.sh        # Entrypoint script
+├── docker-entrypoint.sh        # Container entrypoint
 ├── Makefile                    # 20+ commands
 ├── .env.example                # Environment variables
-├── .dockerignore               # Docker ignore rules
-├── .gitignore                  # Git ignore rules
-├── LICENSE                     # MIT License
-└── *.sh                        # Management scripts
+└── README.md                   # This file
 ```
 
 ## 🧪 Testing
@@ -216,7 +262,7 @@ cat .claude/settings.json
 chmod +x *.sh docker-entrypoint.sh
 ```
 
-See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more solutions.
+See [Troubleshooting Guide](docs/getting-started/TROUBLESHOOTING.md) for more solutions.
 
 ## 📊 Performance
 
@@ -228,7 +274,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more solutions.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are welcome! Please read [Contributing Guide](docs/development/CONTRIBUTING.md) for details.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
