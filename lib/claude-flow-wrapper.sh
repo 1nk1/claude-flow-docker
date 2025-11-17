@@ -9,9 +9,17 @@ if [ -f /workspace/lib/agent-logger.sh ]; then
     source /workspace/lib/agent-logger.sh
 fi
 
-# Original claude-flow command
-CLAUDE_FLOW_BIN="/usr/local/bin/npx"
-CLAUDE_FLOW_ARGS="claude-flow@alpha"
+# Original claude-flow command (use global installation)
+# Find the real claude-flow binary (not this wrapper)
+CLAUDE_FLOW_REAL=$(find /usr/local/lib/node_modules/.bin -name "claude-flow" 2>/dev/null | head -1)
+if [ -z "$CLAUDE_FLOW_REAL" ]; then
+    # Fallback to npx if global not found
+    CLAUDE_FLOW_BIN="/usr/local/bin/npx"
+    CLAUDE_FLOW_ARGS="claude-flow@alpha"
+else
+    CLAUDE_FLOW_BIN="$CLAUDE_FLOW_REAL"
+    CLAUDE_FLOW_ARGS=""
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Agent Detection and Logging

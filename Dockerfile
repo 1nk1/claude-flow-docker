@@ -51,8 +51,7 @@ COPY lib/logger.sh /workspace/lib/
 COPY lib/agent-logger.sh /workspace/lib/
 COPY lib/claude-flow-wrapper.sh /workspace/lib/
 RUN chmod +x /workspace/lib/logger.sh /workspace/lib/agent-logger.sh /workspace/lib/claude-flow-wrapper.sh && \
-    chown appuser:appgroup /workspace/lib/*.sh && \
-    ln -sf /workspace/lib/claude-flow-wrapper.sh /usr/local/bin/claude-flow
+    chown appuser:appgroup /workspace/lib/*.sh
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

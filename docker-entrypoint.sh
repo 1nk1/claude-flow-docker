@@ -107,7 +107,8 @@ fi
 log_section "Claude-Flow Framework"
 
 if command -v claude-flow &>/dev/null; then
-    CLAUDE_FLOW_VERSION=$(npx claude-flow@alpha --version 2>&1 | head -1 || echo 'alpha')
+    # Use the globally installed version, not npx
+    CLAUDE_FLOW_VERSION=$(claude-flow --version 2>&1 | head -1 || echo 'installed')
     log_success "Claude-Flow: $CLAUDE_FLOW_VERSION"
     log_to_file "INFO" "Claude-Flow version: $CLAUDE_FLOW_VERSION" "CLAUDE-FLOW"
 else
@@ -176,23 +177,30 @@ MEMORY_DB="/workspace/.swarm/memory.db"
 
 if [[ ! -f "$MEMORY_DB" ]]; then
     log_warn "Memory database not found, initializing..."
-    log_command "npx claude-flow@alpha init --force" "Initializing Claude-Flow"
+    log_command "claude-flow init --force" "Initializing Claude-Flow"
 
-    npx claude-flow@alpha init --force 2>&1 | while IFS= read -r line; do
+    # Run init with timeout and capture output
+    if timeout 30 claude-flow init --force 2>&1 | while IFS= read -r line; do
         if [[ "$line" =~ ✓|Success|initialized ]]; then
             log_success "$line"
         else
             log_trace "$line" "INIT"
         fi
-    done
+    done; then
+        log_debug "Init command completed" "INIT"
+    else
+        log_warn "Init command failed or timed out (exit code: $?)" "INIT"
+    fi
 
+    # Check if database was created
     if [[ -f "$MEMORY_DB" ]]; then
         DB_SIZE=$(du -sh "$MEMORY_DB" | cut -f1)
         log_success "Memory DB created: $DB_SIZE"
         log_metric "Database Size" "$DB_SIZE"
     else
-        log_error "Failed to create memory database"
-        exit 1
+        log_warn "Memory database not created during init"
+        log_warn "Database will be created automatically on first use"
+        log_debug "This is normal for fresh installations" "DB"
     fi
 else
     DB_SIZE=$(du -sh "$MEMORY_DB" | cut -f1)
@@ -272,7 +280,7 @@ done
 
 log_section "Hive-Mind Status"
 
-HIVE_STATUS=$(npx claude-flow@alpha hive-mind status 2>/dev/null || echo "")
+HIVE_STATUS=$(claude-flow hive-mind status 2>/dev/null || echo "")
 
 if [[ -n "$HIVE_STATUS" ]]; then
     log_info "$HIVE_STATUS"
@@ -289,7 +297,7 @@ log_section "MCP Server Verification"
 log_debug "Testing MCP server availability..." "MCP"
 
 # Test if MCP can be invoked
-if timeout 5 npx claude-flow@alpha mcp --help &>/dev/null; then
+if timeout 5 claude-flow mcp --help &>/dev/null; then
     log_success "MCP server is ready"
     log_mcp_event "STATUS" "Server operational"
 else

@@ -6,7 +6,13 @@
       "env": {
         "CLAUDE_FLOW_HOME": "/workspace",
         "CLAUDE_FLOW_PROJECT": "/workspace/project",
-        "CLAUDE_FLOW_STORAGE": "/workspace/.swarm"
+        "CLAUDE_FLOW_STORAGE": "/workspace/.swarm",
+        "CLAUDE_FLOW_DEBUG": "true",
+        "CLAUDE_FLOW_VERBOSE": "true",
+        "CLAUDE_FLOW_LOG_LEVEL": "debug",
+        "MCP_DEBUG": "true",
+        "MCP_LOG_LEVEL": "debug",
+        "LOG_LEVEL": "debug"
       }
     }
   }
