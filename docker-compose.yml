@@ -6,53 +6,61 @@ services:
     container_name: claude-flow-alpha
     hostname: claude-flow
 
+    # Volumes для persistent storage
     volumes:
-      - ${PROJECT_PATH}:/workspace/project
+      # Рабочая директория проекта (bind mount для доступа к файлам)
+      - ./project:/workspace/project
+
+      # Persistent storage для Claude-Flow
       - claude-flow-hive:/workspace/.hive-mind
       - claude-flow-swarm:/workspace/.swarm
       - claude-flow-memory:/workspace/memory
       - claude-flow-coordination:/workspace/coordination
+
+      # Конфигурация (опционально)
       - ./config/.claude:/workspace/.claude
-      - ${DESKTOP_FILES_PATH}:/workspace/files
+
+      # Логи
       - ./logs:/workspace/logs
 
-    ports:
-      - "${MCP_SERVER_PORT:-8811}:8811"
-
+    # Переменные окружения
     environment:
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - LOG_TO_FILE=${LOG_TO_FILE:-true}
-      - LOG_FILE=/workspace/logs/claude-flow.log
-      - CLAUDE_FLOW_LOG_LEVEL=${CLAUDE_FLOW_LOG_LEVEL:-info}
-      - CLAUDE_FLOW_PROJECT=${CLAUDE_FLOW_PROJECT}
-      - CLAUDE_FLOW_HOME=${CLAUDE_FLOW_HOME}
-      - CLAUDE_FLOW_STORAGE=${CLAUDE_FLOW_STORAGE}
-      - NODE_ENV=${NODE_ENV:-production}
-      - MCP_SERVER_MODE=${MCP_SERVER_MODE:-stdio}
-      - MCP_SERVER_PORT=${MCP_SERVER_PORT:-8811}
-      - SQLITE_TMPDIR=${SQLITE_TMPDIR}
+      - NODE_ENV=development
+      - CLAUDE_FLOW_HOME=/workspace
+      - CLAUDE_FLOW_PROJECT=/workspace/project
+      - CLAUDE_FLOW_LOG_LEVEL=info
+      - MCP_SERVER_MODE=stdio
+      - SQLITE_TMPDIR=/workspace/.swarm
 
+    # Сеть
     networks:
       - claude-flow-net
 
+    # Resource limits
     deploy:
       resources:
         limits:
-          cpus: "${CONTAINER_CPU_LIMIT:-2}"
-          memory: "${CONTAINER_MEMORY_LIMIT:-4G}"
+          cpus: "${CONTAINER_CPU_LIMIT}"
+          memory: "${CONTAINER_MEMORY_LIMIT}"
         reservations:
-          cpus: "${CONTAINER_CPU_RESERVATION:-1}"
-          memory: "${CONTAINER_MEMORY_RESERVATION:-2G}"
-
+          cpus: "${CONTAINER_CPU_RESERVATION}"
+          memory: "${CONTAINER_MEMORY_RESERVATION}"
+    # Restart policy
     restart: unless-stopped
+
+    # Stdin/stdout для MCP communication
     stdin_open: true
     tty: true
 
+    # Команда для keep alive
+    command: tail -f /dev/null
+
+  # Опциональный service для Flow Nexus Cloud (если нужен)
   flow-nexus:
     image: node:18-alpine
     container_name: flow-nexus-bridge
     volumes:
-      - ${PROJECT_PATH}:/workspace/project
+      - ./project:/workspace/project
       - flow-nexus-data:/data
     environment:
       - FLOW_NEXUS_API_URL=https://flow-nexus.ruv.io
@@ -64,12 +72,17 @@ services:
 
 volumes:
   claude-flow-hive:
+    name: claude-flow-hive
   claude-flow-swarm:
+    name: claude-flow-swarm
   claude-flow-memory:
+    name: claude-flow-memory
   claude-flow-coordination:
+    name: claude-flow-coordination
   flow-nexus-data:
+    name: flow-nexus-data
 
 networks:
   claude-flow-net:
+    name: claude-flow-network
     driver: bridge
-
