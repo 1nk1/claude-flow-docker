@@ -196,6 +196,17 @@ logs-save: ## Save logs to file
 watch: ## Monitor container (watch)
 	@watch -n 2 'docker stats $(CONTAINER_NAME) --no-stream'
 
+agents: ## View active agents with colors and status
+	@echo "$(BLUE)🤖 Active Agents...$(NC)"
+	@docker exec $(CONTAINER_NAME) bash -c "source /workspace/lib/agent-logger.sh && show_active_agents"
+
+agents-logs: ## View agent activity logs (live)
+	@echo "$(BLUE)🤖 Following agent logs...$(NC)"
+	@docker exec $(CONTAINER_NAME) tail -f /workspace/logs/agents.log
+
+agents-tail: ## Last 50 lines of agent logs
+	@docker exec $(CONTAINER_NAME) tail -n 50 /workspace/logs/agents.log
+
 stats: ## Resource usage statistics
 	@docker stats $(CONTAINER_NAME) --no-stream
 

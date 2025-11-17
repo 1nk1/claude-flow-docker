@@ -19,6 +19,12 @@ else
     log_section() { echo ">> $1"; }
 fi
 
+# Load agent logger
+if [[ -f /workspace/lib/agent-logger.sh ]]; then
+    source /workspace/lib/agent-logger.sh
+    log_debug "Agent logger loaded" "AGENT-LOGGER"
+fi
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Environment Variables
 # ═══════════════════════════════════════════════════════════════════════════
@@ -28,7 +34,7 @@ export CLAUDE_FLOW_PROJECT="${CLAUDE_FLOW_PROJECT:-/workspace/project}"
 export CLAUDE_FLOW_STORAGE="${CLAUDE_FLOW_STORAGE:-/workspace/.swarm}"
 export MCP_SERVER_PORT="${MCP_SERVER_PORT:-3000}"
 export NODE_ENV="${NODE_ENV:-production}"
-export LOG_LEVEL="${LOG_LEVEL:-INFO}"
+export LOG_LEVEL="${CLAUDE_FLOW_LOG_LEVEL:-${LOG_LEVEL:-INFO}}"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Startup Banner
@@ -211,7 +217,7 @@ MCP_CONFIG_FILE="/workspace/.claude/mcp-config-template.json"
 
 log_debug "Generating MCP configuration..." "MCP"
 
-cat > "$MCP_CONFIG_FILE" << 'EOFMCP'
+cat > "$MCP_CONFIG_FILE" << EOFMCP
 {
   "mcpServers": {
     "claude-flow": {
@@ -221,7 +227,12 @@ cat > "$MCP_CONFIG_FILE" << 'EOFMCP'
         "CLAUDE_FLOW_HOME": "/workspace",
         "CLAUDE_FLOW_PROJECT": "/workspace/project",
         "CLAUDE_FLOW_STORAGE": "/workspace/.swarm",
-        "LOG_LEVEL": "INFO"
+        "CLAUDE_FLOW_DEBUG": "${CLAUDE_FLOW_DEBUG:-false}",
+        "CLAUDE_FLOW_VERBOSE": "${CLAUDE_FLOW_VERBOSE:-false}",
+        "CLAUDE_FLOW_LOG_LEVEL": "${CLAUDE_FLOW_LOG_LEVEL:-info}",
+        "MCP_DEBUG": "${MCP_DEBUG:-false}",
+        "MCP_LOG_LEVEL": "${MCP_LOG_LEVEL:-info}",
+        "LOG_LEVEL": "${LOG_LEVEL:-INFO}"
       }
     }
   }
@@ -330,6 +341,18 @@ cat << 'USAGE'
 │   cat /workspace/logs/claude-flow.log      # Full log file       │
 └───────────────────────────────────────────────────────────────────┘
 
+
+┌─ Agent Visualization ─────────────────────────────────────────┐
+│ # View active agents with colors and real-time status         │
+│ docker exec claude-flow-alpha bash -c \                       │
+│   "source /workspace/lib/agent-logger.sh && show_active_agents"│
+│                                                                 │
+│ # Watch agent activity in real-time (use lazydocker)           │
+│ docker logs -f claude-flow-alpha                              │
+│                                                                 │
+│ # Agent logs support up to 8 concurrent agents                │
+│ # Each agent has unique color, icon, name, specialization     │
+└───────────────────────────────────────────────────────────────┘
 USAGE
 
 # ═══════════════════════════════════════════════════════════════════════════
