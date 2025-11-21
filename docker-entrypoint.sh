@@ -3,421 +3,105 @@ set -e
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Claude-Flow Docker Container Entrypoint
-# Advanced logging and initialization
+# Clean, minimal output
 # ═══════════════════════════════════════════════════════════════════════════
 
-# Load logger library
-if [[ -f /workspace/lib/logger.sh ]]; then
-    source /workspace/lib/logger.sh
-else
-    # Fallback minimal logging if logger not available
-    log_info() { echo "[INFO] $1"; }
-    log_success() { echo "[SUCCESS] $1"; }
-    log_warn() { echo "[WARN] $1"; }
-    log_error() { echo "[ERROR] $1"; }
-    log_header() { echo "=== $1 ==="; }
-    log_section() { echo ">> $1"; }
-fi
+# Colors
+RST='\e[0m' B='\e[1m' DIM='\e[2m'
+GRN='\e[92m' CYN='\e[96m' YEL='\e[93m' RED='\e[91m' GRY='\e[90m'
 
-# Load agent logger
-if [[ -f /workspace/lib/agent-logger.sh ]]; then
-    source /workspace/lib/agent-logger.sh
-    log_debug "Agent logger loaded" "AGENT-LOGGER"
-fi
+ok() { echo -e "${GRN}✓${RST} $1"; }
+info() { echo -e "${CYN}›${RST} $1"; }
+warn() { echo -e "${YEL}!${RST} $1"; }
+err() { echo -e "${RED}✗${RST} $1"; }
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Environment Variables
+# Environment
 # ═══════════════════════════════════════════════════════════════════════════
 
 export CLAUDE_FLOW_HOME="${CLAUDE_FLOW_HOME:-/workspace}"
 export CLAUDE_FLOW_PROJECT="${CLAUDE_FLOW_PROJECT:-/workspace/project}"
 export CLAUDE_FLOW_STORAGE="${CLAUDE_FLOW_STORAGE:-/workspace/.swarm}"
-export MCP_SERVER_PORT="${MCP_SERVER_PORT:-3000}"
 export NODE_ENV="${NODE_ENV:-production}"
-export LOG_LEVEL="${CLAUDE_FLOW_LOG_LEVEL:-${LOG_LEVEL:-INFO}}"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Startup Banner
+# Banner
 # ═══════════════════════════════════════════════════════════════════════════
 
-log_header "🐳 CLAUDE-FLOW DOCKER CONTAINER"
-
-log_info "Container: $(hostname)"
-log_info "User: $(whoami)"
-log_info "Started: $(date '+%Y-%m-%d %H:%M:%S %Z')"
-log_info "Log Level: $LOG_LEVEL"
+echo -e "\n${B}${CYN}Claude-Flow Container${RST}"
+echo -e "${GRY}$(date '+%Y-%m-%d %H:%M:%S')${RST}\n"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# System Information
+# Check dependencies
 # ═══════════════════════════════════════════════════════════════════════════
 
-log_section "System Information"
+command -v node &>/dev/null && ok "Node $(node --version)" || { err "Node.js not found"; exit 1; }
+command -v npm &>/dev/null && ok "npm v$(npm --version)" || { err "npm not found"; exit 1; }
+command -v claude &>/dev/null && ok "Claude CLI" || warn "Claude CLI not found"
+command -v claude-flow &>/dev/null && ok "Claude-Flow $(claude-flow --version 2>/dev/null | head -1)" || {
+    info "Installing claude-flow..."
+    npm install -g claude-flow@alpha &>/dev/null && ok "Claude-Flow installed" || err "Install failed"
+}
 
-log_metric "Platform" "$(uname -s)"
-log_metric "Architecture" "$(uname -m)"
-log_metric "Kernel" "$(uname -r)"
+# ═══════════════════════════════════════════════════════════════════════════
+# Setup directories
+# ═══════════════════════════════════════════════════════════════════════════
 
-if command -v free &>/dev/null; then
-    local total_mem=$(free -m | awk 'NR==2{print $2}')
-    log_metric "Memory" "${total_mem}MB" "total"
+mkdir -p /workspace/{.hive-mind,.swarm,memory,coordination,logs,project,.claude,lib} 2>/dev/null
+
+# Install wrapper if exists
+if [[ -f /workspace/lib/claude-flow-wrapper.sh ]]; then
+    cp /workspace/lib/claude-flow-wrapper.sh /usr/local/bin/claude-flow
+    chmod 755 /usr/local/bin/claude-flow
 fi
 
-# ═══════════════════════════════════════════════════════════════════════════
-# Node.js Environment
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Node.js Environment"
-
-if command -v node &>/dev/null; then
-    NODE_VERSION=$(node --version)
-    log_success "Node.js: $NODE_VERSION"
-    log_to_file "INFO" "Node.js version: $NODE_VERSION" "NODEJS"
-else
-    log_error "Node.js not found!"
-    exit 1
-fi
-
-if command -v npm &>/dev/null; then
-    NPM_VERSION=$(npm --version)
-    log_success "npm: v$NPM_VERSION"
-    log_to_file "INFO" "npm version: $NPM_VERSION" "NODEJS"
-else
-    log_error "npm not found!"
-    exit 1
-fi
+# Load agent logger
+[[ -f /workspace/lib/agent-logger.sh ]] && source /workspace/lib/agent-logger.sh
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Claude Code
+# Initialize if needed
 # ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Claude Code CLI"
-
-if command -v claude &>/dev/null; then
-    CLAUDE_VERSION=$(claude --version 2>&1 | head -1 || echo 'installed')
-    log_success "Claude Code: $CLAUDE_VERSION"
-    log_to_file "INFO" "Claude Code: $CLAUDE_VERSION" "CLAUDE"
-else
-    log_warn "Claude Code CLI not found (optional)"
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Claude-Flow Installation
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Claude-Flow Framework"
-
-if command -v claude-flow &>/dev/null; then
-    # Use the globally installed version, not npx
-    CLAUDE_FLOW_VERSION=$(claude-flow --version 2>&1 | head -1 || echo 'installed')
-    log_success "Claude-Flow: $CLAUDE_FLOW_VERSION"
-    log_to_file "INFO" "Claude-Flow version: $CLAUDE_FLOW_VERSION" "CLAUDE-FLOW"
-else
-    log_warn "Claude-Flow not found, installing..."
-    log_command "npm install -g claude-flow@alpha" "Installing Claude-Flow alpha"
-
-    npm install -g claude-flow@alpha 2>&1 | while IFS= read -r line; do
-        log_trace "$line" "NPM"
-    done
-
-    if command -v claude-flow &>/dev/null; then
-        log_success "Claude-Flow installed successfully"
-    else
-        log_error "Failed to install Claude-Flow"
-        exit 1
-    fi
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Install Agent Wrapper (survives npm updates)
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Agent Visualization Wrapper"
-
-WRAPPER_SOURCE="/workspace/lib/claude-flow-wrapper.sh"
-WRAPPER_TARGET="/usr/local/bin/claude-flow"
-
-if [[ -f "$WRAPPER_SOURCE" ]]; then
-    log_debug "Installing agent wrapper..." "WRAPPER"
-
-    # Install wrapper to intercept claude-flow commands
-    cp "$WRAPPER_SOURCE" "$WRAPPER_TARGET"
-    chmod 755 "$WRAPPER_TARGET"
-
-    log_success "Agent wrapper installed: $WRAPPER_TARGET"
-    log_debug "Wrapper will log agent activity to /workspace/logs/agents.log" "WRAPPER"
-else
-    log_warn "Agent wrapper not found at $WRAPPER_SOURCE"
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Cleanup
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Cleanup"
-
-log_command "rm -rf /usr/local/lib/node_modules/.better-sqlite3*" "Removing temp files"
-rm -rf /usr/local/lib/node_modules/.better-sqlite3* 2>/dev/null && log_success "Temp files cleaned" || log_debug "No temp files to clean"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Directory Structure
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Directory Structure"
-
-DIRECTORIES=(
-    "/workspace/.hive-mind"
-    "/workspace/.swarm"
-    "/workspace/memory"
-    "/workspace/coordination"
-    "/workspace/logs"
-    "/workspace/project"
-    "/workspace/.claude"
-    "/workspace/lib"
-)
-
-log_debug "Creating required directories..." "SETUP"
-
-for dir in "${DIRECTORIES[@]}"; do
-    if mkdir -p "$dir" 2>/dev/null; then
-        log_trace "✓ $dir" "SETUP"
-    else
-        log_warn "Failed to create: $dir"
-    fi
-done
-
-log_success "All directories ready"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Claude-Flow Initialization
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Claude-Flow Initialization"
 
 cd /workspace/project
 
-MEMORY_DB="/workspace/.swarm/memory.db"
-
-if [[ ! -f "$MEMORY_DB" ]]; then
-    log_warn "Memory database not found, initializing..."
-    log_command "claude-flow init --force" "Initializing Claude-Flow"
-
-    # Run init with timeout and capture output
-    if timeout 30 claude-flow init --force 2>&1 | while IFS= read -r line; do
-        if [[ "$line" =~ ✓|Success|initialized ]]; then
-            log_success "$line"
-        else
-            log_trace "$line" "INIT"
-        fi
-    done; then
-        log_debug "Init command completed" "INIT"
-    else
-        log_warn "Init command failed or timed out (exit code: $?)" "INIT"
-    fi
-
-    # Check if database was created
-    if [[ -f "$MEMORY_DB" ]]; then
-        DB_SIZE=$(du -sh "$MEMORY_DB" | cut -f1)
-        log_success "Memory DB created: $DB_SIZE"
-        log_metric "Database Size" "$DB_SIZE"
-    else
-        log_warn "Memory database not created during init"
-        log_warn "Database will be created automatically on first use"
-        log_debug "This is normal for fresh installations" "DB"
-    fi
-else
-    DB_SIZE=$(du -sh "$MEMORY_DB" | cut -f1)
-    log_success "Memory DB exists: $DB_SIZE"
-    log_metric "Database Size" "$DB_SIZE"
-
-    # Check database integrity
-    if sqlite3 "$MEMORY_DB" "PRAGMA integrity_check;" &>/dev/null; then
-        log_debug "Database integrity check: PASSED" "DB"
-    else
-        log_warn "Database integrity check failed, may need repair"
-    fi
+if [[ ! -f /workspace/.swarm/memory.db ]]; then
+    info "Initializing..."
+    timeout 30 claude-flow init --force &>/dev/null && ok "Initialized" || warn "Init skipped"
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════
-# MCP Configuration
+# MCP Config
 # ═══════════════════════════════════════════════════════════════════════════
 
-log_section "MCP Server Configuration"
-
-MCP_CONFIG_FILE="/workspace/.claude/mcp-config-template.json"
-
-log_debug "Generating MCP configuration..." "MCP"
-
-cat > "$MCP_CONFIG_FILE" << EOFMCP
+cat > /workspace/.claude/mcp-config-template.json << 'EOF'
 {
   "mcpServers": {
     "claude-flow": {
       "command": "docker",
-      "args": ["exec", "-i", "claude-flow-alpha", "npx", "claude-flow@alpha", "mcp", "start"],
-      "env": {
-        "CLAUDE_FLOW_HOME": "/workspace",
-        "CLAUDE_FLOW_PROJECT": "/workspace/project",
-        "CLAUDE_FLOW_STORAGE": "/workspace/.swarm",
-        "CLAUDE_FLOW_DEBUG": "${CLAUDE_FLOW_DEBUG:-false}",
-        "CLAUDE_FLOW_VERBOSE": "${CLAUDE_FLOW_VERBOSE:-false}",
-        "CLAUDE_FLOW_LOG_LEVEL": "${CLAUDE_FLOW_LOG_LEVEL:-info}",
-        "MCP_DEBUG": "${MCP_DEBUG:-false}",
-        "MCP_LOG_LEVEL": "${MCP_LOG_LEVEL:-info}",
-        "LOG_LEVEL": "${LOG_LEVEL:-INFO}"
-      }
+      "args": ["exec", "-i", "claude-flow-alpha", "claude-flow", "mcp", "start"]
     }
   }
 }
-EOFMCP
+EOF
 
-if [[ -f "$MCP_CONFIG_FILE" ]]; then
-    log_success "MCP config created: $MCP_CONFIG_FILE"
-    log_mcp_event "CONFIG" "Template ready for local connection"
-else
-    log_error "Failed to create MCP config"
+# ═══════════════════════════════════════════════════════════════════════════
+# External project info
+# ═══════════════════════════════════════════════════════════════════════════
+
+if [[ -d /workspace/external ]]; then
+    EXT_COUNT=$(ls -1 /workspace/external 2>/dev/null | wc -l)
+    ok "External projects: $EXT_COUNT mounted"
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Environment Summary
+# Ready
 # ═══════════════════════════════════════════════════════════════════════════
 
-log_section "Environment Variables"
+echo -e "\n${B}Ready${RST}"
+echo -e "${GRY}─────────────────────────────────────${RST}"
+echo -e "  ${DIM}Shell:${RST}     docker exec -it claude-flow-alpha sh"
+echo -e "  ${DIM}Dashboard:${RST} ./live-dashboard.sh"
+echo -e "  ${DIM}Logs:${RST}      docker logs -f claude-flow-alpha"
+echo -e "${GRY}─────────────────────────────────────${RST}\n"
 
-ENV_VARS=(
-    "CLAUDE_FLOW_HOME:$CLAUDE_FLOW_HOME"
-    "CLAUDE_FLOW_PROJECT:$CLAUDE_FLOW_PROJECT"
-    "CLAUDE_FLOW_STORAGE:$CLAUDE_FLOW_STORAGE"
-    "MCP_SERVER_PORT:$MCP_SERVER_PORT"
-    "NODE_ENV:$NODE_ENV"
-    "LOG_LEVEL:$LOG_LEVEL"
-)
-
-for env_var in "${ENV_VARS[@]}"; do
-    IFS=: read -r name value <<< "$env_var"
-    log_metric "$name" "$value"
-done
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Hive-Mind Status
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "Hive-Mind Status"
-
-HIVE_STATUS=$(claude-flow hive-mind status 2>/dev/null || echo "")
-
-if [[ -n "$HIVE_STATUS" ]]; then
-    log_info "$HIVE_STATUS"
-else
-    log_debug "No active hive-mind sessions" "HIVE-MIND"
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# MCP Server Test
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_section "MCP Server Verification"
-
-log_debug "Testing MCP server availability..." "MCP"
-
-# Test if MCP can be invoked
-if timeout 5 claude-flow mcp --help &>/dev/null; then
-    log_success "MCP server is ready"
-    log_mcp_event "STATUS" "Server operational"
-else
-    log_warn "MCP server test timed out (this is normal on first run)"
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Usage Information
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_header "📚 USAGE INFORMATION"
-
-cat << 'USAGE'
-
-╔════════════════════════════════════════════════════════════════════╗
-║                      🚀 QUICK START COMMANDS                       ║
-╚════════════════════════════════════════════════════════════════════╝
-
-┌─ Interactive Shell ───────────────────────────────────────────────┐
-│ docker exec -it claude-flow-alpha sh                              │
-│ cd /workspace/project                                             │
-│ claude                                                            │
-└───────────────────────────────────────────────────────────────────┘
-
-┌─ Claude-Flow Commands ────────────────────────────────────────────┐
-│ npx claude-flow@alpha --help                                      │
-│ npx claude-flow@alpha swarm create "build REST API"              │
-│ npx claude-flow@alpha hive-mind spawn "implement feature"        │
-│ npx claude-flow@alpha memory stats                               │
-│ npx claude-flow@alpha agent list                                 │
-└───────────────────────────────────────────────────────────────────┘
-
-┌─ MCP Connection ──────────────────────────────────────────────────┐
-│ 1. Copy MCP config to your project:                              │
-│    cp /workspace/.claude/mcp-config-template.json \              │
-│       ~/your-project/.claude/settings.json                       │
-│                                                                   │
-│ 2. Start Claude Code in your project:                            │
-│    cd ~/your-project && claude                                   │
-│                                                                   │
-│ 3. Test MCP connection:                                          │
-│    claude mcp list                                               │
-└───────────────────────────────────────────────────────────────────┘
-
-┌─ Logging ─────────────────────────────────────────────────────────┐
-│ tail -f /workspace/logs/claude-flow.log    # Live logs           │
-│ docker logs -f claude-flow-alpha           # Container logs      │
-│ docker exec claude-flow-alpha \                                  │
-│   cat /workspace/logs/claude-flow.log      # Full log file       │
-└───────────────────────────────────────────────────────────────────┘
-
-
-┌─ Agent Visualization ─────────────────────────────────────────┐
-│ # View active agents with colors and real-time status         │
-│ docker exec claude-flow-alpha bash -c \                       │
-│   "source /workspace/lib/agent-logger.sh && show_active_agents"│
-│                                                                 │
-│ # Watch agent activity in real-time (use lazydocker)           │
-│ docker logs -f claude-flow-alpha                              │
-│                                                                 │
-│ # Agent logs support up to 8 concurrent agents                │
-│ # Each agent has unique color, icon, name, specialization     │
-└───────────────────────────────────────────────────────────────┘
-USAGE
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Readiness Status
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_header "✅ CONTAINER READY"
-
-log_success "Container Name: claude-flow-alpha"
-log_success "MCP Server: Ready for stdio connections via docker exec"
-log_success "Protocol: stdio (not TCP)"
-log_success "Log File: /workspace/logs/claude-flow.log"
-
-log_blank
-log_mcp_event "READY" "Add config to your project's .claude/settings.json"
-log_mcp_event "TEMPLATE" "docker exec claude-flow-alpha cat /workspace/.claude/mcp-config-template.json"
-
-log_separator
-log_blank
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Log Statistics
-# ═══════════════════════════════════════════════════════════════════════════
-
-if [[ -f "$LOG_FILE" ]]; then
-    log_stats
-fi
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Keep Container Running
-# ═══════════════════════════════════════════════════════════════════════════
-
-log_info "Container initialized successfully"
-log_info "Keeping container alive... (Press Ctrl+C to stop)"
-log_blank
-
-# Keep container running without starting TCP server
 exec tail -f /dev/null

@@ -3,76 +3,56 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: claude-flow-alpha
+    container_name: ${CONTAINER_NAME:-claude-flow-alpha}
     hostname: claude-flow
 
-    # Volumes for persistent storage
     volumes:
-      # Project working directory (bind mount for file access)
+      # Internal project directory
       - ./project:/workspace/project
 
-      # Persistent storage for Claude-Flow
+      # External projects (configured via .env)
+      - ${EXTERNAL_PROJECT_1:-./project}:/workspace/external/project1
+      - ${EXTERNAL_PROJECT_2:-./project}:/workspace/external/project2
+      - ${EXTERNAL_PROJECT_3:-./project}:/workspace/external/project3
+
+      # Desktop files (for quick file sharing)
+      - ${DESKTOP_FILES_PATH:-~/Desktop}:/workspace/desktop:ro
+
+      # Persistent storage
       - claude-flow-hive:/workspace/.hive-mind
       - claude-flow-swarm:/workspace/.swarm
       - claude-flow-memory:/workspace/memory
       - claude-flow-coordination:/workspace/coordination
 
-      # Configuration (optional)
+      # Configuration
       - ./config/.claude:/workspace/.claude
+      - ./lib:/workspace/lib
 
       # Logs
       - ./logs:/workspace/logs
 
-    # Environment variables
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-production}
       - CLAUDE_FLOW_HOME=/workspace
       - CLAUDE_FLOW_PROJECT=/workspace/project
-      - CLAUDE_FLOW_LOG_LEVEL=debug
-      - CLAUDE_FLOW_DEBUG=true
-      - CLAUDE_FLOW_VERBOSE=true
+      - CLAUDE_FLOW_LOG_LEVEL=${CLAUDE_FLOW_LOG_LEVEL:-info}
       - MCP_SERVER_MODE=stdio
-      - MCP_DEBUG=true
-      - MCP_LOG_LEVEL=debug
-      - SQLITE_TMPDIR=/workspace/.swarm
 
-    # Network
     networks:
       - claude-flow-net
 
-    # Resource limits
     deploy:
       resources:
         limits:
-          cpus: "${CONTAINER_CPU_LIMIT}"
-          memory: "${CONTAINER_MEMORY_LIMIT}"
+          cpus: "${CONTAINER_CPU_LIMIT:-2}"
+          memory: "${CONTAINER_MEMORY_LIMIT:-4G}"
         reservations:
-          cpus: "${CONTAINER_CPU_RESERVATION}"
-          memory: "${CONTAINER_MEMORY_RESERVATION}"
-    # Restart policy
-    restart: unless-stopped
+          cpus: "${CONTAINER_CPU_RESERVATION:-1}"
+          memory: "${CONTAINER_MEMORY_RESERVATION:-2G}"
 
-    # Stdin/stdout for MCP communication
+    restart: unless-stopped
     stdin_open: true
     tty: true
-
-    # Command to keep alive
-    command: tail -f /dev/null
-
-  # Optional service for Flow Nexus Cloud (if needed)
-  flow-nexus:
-    image: node:18-alpine
-    container_name: flow-nexus-bridge
-    volumes:
-      - ./project:/workspace/project
-      - flow-nexus-data:/data
-    environment:
-      - FLOW_NEXUS_API_URL=https://flow-nexus.ruv.io
-    networks:
-      - claude-flow-net
-    profiles:
-      - nexus
-    command: tail -f /dev/null
 
 volumes:
   claude-flow-hive:
@@ -83,8 +63,6 @@ volumes:
     name: claude-flow-memory
   claude-flow-coordination:
     name: claude-flow-coordination
-  flow-nexus-data:
-    name: flow-nexus-data
 
 networks:
   claude-flow-net:
