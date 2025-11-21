@@ -217,14 +217,14 @@ demo-agents: ## Run agent visualization demo
 
 cf-memory: ## View claude-flow memory stats
 	@echo "$(PURPLE)💾 Claude-Flow Memory Statistics...$(NC)"
-	@docker exec $(CONTAINER_NAME) claude-flow memory stats
+	@docker exec $(CONTAINER_NAME) bash /workspace/lib/claude-flow-wrapper.sh memory stats
 
 cf-hive: ## Initialize hive-mind system
 	@echo "$(YELLOW)🐝 Initializing Hive-Mind...$(NC)"
-	@docker exec $(CONTAINER_NAME) claude-flow hive-mind init
+	@docker exec $(CONTAINER_NAME) bash /workspace/lib/claude-flow-wrapper.sh hive-mind init
 
 cf-query: ## Query memory (usage: make cf-query Q="search term")
-	@docker exec $(CONTAINER_NAME) claude-flow memory query "$(Q)"
+	@docker exec $(CONTAINER_NAME) bash /workspace/lib/claude-flow-wrapper.sh memory query "$(Q)"
 
 stats: ## Resource usage statistics
 	@docker stats $(CONTAINER_NAME) --no-stream

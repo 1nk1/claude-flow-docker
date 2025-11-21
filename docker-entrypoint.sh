@@ -128,6 +128,28 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════
+# Install Agent Wrapper (survives npm updates)
+# ═══════════════════════════════════════════════════════════════════════════
+
+log_section "Agent Visualization Wrapper"
+
+WRAPPER_SOURCE="/workspace/lib/claude-flow-wrapper.sh"
+WRAPPER_TARGET="/usr/local/bin/claude-flow"
+
+if [[ -f "$WRAPPER_SOURCE" ]]; then
+    log_debug "Installing agent wrapper..." "WRAPPER"
+
+    # Install wrapper to intercept claude-flow commands
+    cp "$WRAPPER_SOURCE" "$WRAPPER_TARGET"
+    chmod 755 "$WRAPPER_TARGET"
+
+    log_success "Agent wrapper installed: $WRAPPER_TARGET"
+    log_debug "Wrapper will log agent activity to /workspace/logs/agents.log" "WRAPPER"
+else
+    log_warn "Agent wrapper not found at $WRAPPER_SOURCE"
+fi
+
+# ═══════════════════════════════════════════════════════════════════════════
 # Cleanup
 # ═══════════════════════════════════════════════════════════════════════════
 
