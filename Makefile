@@ -215,6 +215,22 @@ demo-agents: ## Run agent visualization demo
 	@echo "$(BLUE)🎨 Running agent demo...$(NC)"
 	@./demo-agents.sh
 
+dashboard: ## Open live agent dashboard (run in external terminal)
+	@echo "$(BLUE)📊 Starting Live Dashboard...$(NC)"
+	@echo "$(YELLOW)Run this in Terminal.app or iTerm2 (not VS Code)$(NC)"
+	@./live-dashboard.sh
+
+agent-run: ## Run a real agent (make agent-run TYPE=researcher TASK="analyze code")
+	@if [ -z "$(TYPE)" ] || [ -z "$(TASK)" ]; then \
+		echo "$(RED)$(CROSS) Usage: make agent-run TYPE=\"researcher\" TASK=\"your task\"$(NC)"; \
+		echo ""; \
+		echo "Available agent types:"; \
+		echo "  researcher, coder, analyst, architect, tester, reviewer, optimizer"; \
+		exit 1; \
+	fi
+	@echo "$(BLUE)🤖 Running $(TYPE) agent...$(NC)"
+	@./run-agent.sh $(TYPE) "$(TASK)"
+
 cf-memory: ## View claude-flow memory stats
 	@echo "$(PURPLE)💾 Claude-Flow Memory Statistics...$(NC)"
 	@docker exec $(CONTAINER_NAME) bash /workspace/lib/claude-flow-wrapper.sh memory stats

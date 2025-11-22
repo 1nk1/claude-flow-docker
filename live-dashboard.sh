@@ -99,9 +99,36 @@ while true; do
         q|Q) break ;;
         $'\033[A'|k) [ $SEL -gt 0 ] && SEL=$((SEL - 1)) ;;
         $'\033[B'|j) SEL=$((SEL + 1)) ;;
-        p|P) [ -n "${AIDS[$SEL]}" ] && docker exec "$CONTAINER" sh -c "echo 'AGENT_PAUSED | ID=${AIDS[$SEL]} | T$(date +%H:%M:%S)' >> /workspace/logs/agents.log" 2>/dev/null & ;;
-        s|S) [ -n "${AIDS[$SEL]}" ] && docker exec "$CONTAINER" sh -c "echo 'AGENT_COMPLETE | ID=${AIDS[$SEL]} | T$(date +%H:%M:%S)' >> /workspace/logs/agents.log" 2>/dev/null & ;;
-        r|R) [ -n "${AIDS[$SEL]}" ] && docker exec "$CONTAINER" sh -c "echo 'AGENT_RESUME | ID=${AIDS[$SEL]} | T$(date +%H:%M:%S)' >> /workspace/logs/agents.log" 2>/dev/null & ;;
+        p|P)
+            # Pause agent - log + send SIGSTOP to actual process
+            if [ -n "${AIDS[$SEL]}" ]; then
+                docker exec "$CONTAINER" sh -c "
+                    echo 'AGENT_PAUSED | ID=${AIDS[$SEL]} | T\$(date +%H:%M:%S)' >> /workspace/logs/agents.log
+                    # Try to pause actual claude-flow process if running
+                    pkill -STOP -f 'agent.*${AIDS[$SEL]}' 2>/dev/null || true
+                " 2>/dev/null &
+            fi
+            ;;
+        s|S)
+            # Stop agent - log + kill actual process
+            if [ -n "${AIDS[$SEL]}" ]; then
+                docker exec "$CONTAINER" sh -c "
+                    echo 'AGENT_COMPLETE | ID=${AIDS[$SEL]} | T\$(date +%H:%M:%S)' >> /workspace/logs/agents.log
+                    # Try to stop actual claude-flow process if running
+                    pkill -TERM -f 'agent.*${AIDS[$SEL]}' 2>/dev/null || true
+                " 2>/dev/null &
+            fi
+            ;;
+        r|R)
+            # Resume agent - log + send SIGCONT to paused process
+            if [ -n "${AIDS[$SEL]}" ]; then
+                docker exec "$CONTAINER" sh -c "
+                    echo 'AGENT_RESUME | ID=${AIDS[$SEL]} | T\$(date +%H:%M:%S)' >> /workspace/logs/agents.log
+                    # Try to resume actual claude-flow process if paused
+                    pkill -CONT -f 'agent.*${AIDS[$SEL]}' 2>/dev/null || true
+                " 2>/dev/null &
+            fi
+            ;;
     esac
 
     TICK=$((TICK + 1))
