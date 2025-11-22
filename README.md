@@ -1,25 +1,39 @@
 # 🐳 Claude-Flow Docker
 
-[![Docker Build](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/1nk1/claude-flow-docker/actions/workflows/docker-build.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-22.x-brightgreen.svg)](https://nodejs.org/)
-[![Docker](https://img.shields.io/badge/docker-20.10+-blue.svg)](https://www.docker.com/)
+<div align="center">
 
-> 🚀 Isolated Docker environment for [Claude-Flow](https://github.com/ruvnet/claude-flow) with local Claude Code integration
+[![🌟 Star on GitHub](https://img.shields.io/github/stars/ruvnet/claude-flow?style=for-the-badge&logo=github&color=gold)](https://github.com/ruvnet/claude-flow)
+[![📈 Downloads](https://img.shields.io/npm/dt/claude-flow?style=for-the-badge&logo=npm&color=blue&label=Downloads)](https://www.npmjs.com/package/claude-flow)
+[![📦 Latest Release](https://img.shields.io/npm/v/claude-flow/alpha?style=for-the-badge&logo=npm&color=green&label=v2.7.0-alpha.10)](https://www.npmjs.com/package/claude-flow)
+[![⚡ Claude Code](https://img.shields.io/badge/Claude%20Code-SDK%20Integrated-green?style=for-the-badge&logo=anthropic)](https://github.com/ruvnet/claude-flow)
+[![🏛️ Agentics Foundation](https://img.shields.io/badge/Agentics-Foundation-crimson?style=for-the-badge&logo=openai)](https://discord.com/invite/dfxmpwkG2D)
+[![🛡️ MIT License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative)](https://opensource.org/licenses/MIT)
 
-Full-featured AI orchestration in a Docker container with automatic MCP server setup, persistent storage, and hooks system.
+</div>
 
-## ✨ Features
+## 🌟 **Overview**
 
-- 🐝 **Hive-Mind Intelligence** - AI agent coordination in isolated environment
-- 🧠 **27+ Neural Models** - WASM SIMD acceleration
-- 🔧 **87 MCP Tools** - Complete toolkit for AI orchestration
-- 💾 **SQLite Persistent Storage** - Data persists between runs
-- 🪝 **Hooks System** - Workflow automation (pre/post edit, sessions)
-- 🔗 **Local MCP Integration** - Connect to Claude Code without global install
-- 📊 **Advanced Logging** - Multi-level logging with file persistence and auto-rotation
-- 📦 **Node.js 22** - Latest LTS version
-- 🛡️ **Isolated Environment** - Doesn't affect your system
+**Claude-Flow v2.7** is an enterprise-grade AI orchestration platform that combines **hive-mind swarm intelligence**, **persistent memory**, and **100+ advanced MCP tools** to revolutionize AI-powered development workflows.
+
+### 🎯 **Key Features**
+
+- **🎨 25 Claude Skills**: Natural language-activated skills for development, GitHub, memory, and automation
+- **🚀 AgentDB v1.3.9 Integration**: 96x-164x faster vector search with semantic understanding (PR #830)
+- **🧠 Hybrid Memory System**: AgentDB + ReasoningBank with automatic fallback
+- **🔍 Semantic Vector Search**: HNSW indexing (O(log n)) + 9 RL algorithms
+- **🐝 Hive-Mind Intelligence**: Queen-led AI coordination with specialized worker agents
+- **🔧 100 MCP Tools**: Comprehensive toolkit for swarm orchestration and automation
+- **🔄 Dynamic Agent Architecture (DAA)**: Self-organizing agents with fault tolerance
+- **💾 Persistent Memory**: 150x faster search, 4-32x memory reduction (quantization)
+- **🪝 Advanced Hooks System**: Automated workflows with pre/post operation hooks
+- **📊 GitHub Integration**: 6 specialized modes for repository management
+- **🌐 Flow Nexus Cloud**: E2B sandboxes, AI swarms, challenges, and marketplace
+
+> 🔥 **Revolutionary AI Coordination**: Build faster, smarter, and more efficiently with AI-powered development orchestration
+>
+> 🆕 **NEW: AgentDB Integration**: 96x-164x performance boost with semantic vector search, reflexion memory, and skill library auto-consolidation
+
+
 
 ## 🎯 Quick Start
 
@@ -307,6 +321,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for isolated AI development with Claude-Flow**
 
-**Version:** 1.0.0  
-**Status:** Production Ready  
+**Version:** 1.0.0
+**Status:** Production Ready
 **Maintained:** Yes
